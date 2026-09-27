@@ -301,7 +301,7 @@ def place_summaries(scored: pd.DataFrame, places: pd.DataFrame, alerts: list[dic
         pid = p["place_id"]
         place_alerts = [a for a in alerts if a["place_id"] == pid]
         # level reflects the worst alert this place has ever had in the dataset (this is a
-        # retrospective view over history, not a "right now" live feed — see PLAN.md).
+        # retrospective view over history, not a "right now" live feed).
         level = max((a["level"] for a in place_alerts), key=LEVELS.index, default="green")
         hits_7d = int(counts[(counts.place_id == pid) & (counts.date >= last7)]["count"].sum())
         hits_prev_7d = int(counts[(counts.place_id == pid) & (counts.date >= prev7_start) & (counts.date <= prev7_end)]["count"].sum())

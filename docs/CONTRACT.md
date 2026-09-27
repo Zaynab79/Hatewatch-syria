@@ -1,8 +1,11 @@
 # HateWatch Syria — data contract (v1, Instagram-only, city/district level)
 
-Everyone codes against this. If you need to change a column, edit this file first and say so in the group chat.
+Every part of the pipeline codes against this. If a column needs to change, this file is the
+source of truth to update first.
 
-Working scope tonight: **Instagram only**, location at **city / district level** (not village/neighbourhood — that's a roadmap item, see PLAN.md). Telegram/WhatsApp columns are reserved but not filled tonight.
+Current scope: **Instagram only**, location at **city / district level** (not village/neighbourhood
+— see the main README's "Research directions"). Telegram/WhatsApp columns are reserved for that
+future work but not filled yet.
 
 ---
 
@@ -71,7 +74,8 @@ Worked example: "طرد كل الفلول من حمص" (drive out all the fulul 
 
 A message's `place_id` = best alias match against `post_location_name`; if no tag, try a place name mentioned in `text`. No match → counted in the Syria-wide total only, not shown on the map (`unlocated`).
 
-Village/neighbourhood level is NOT in scope tonight (see PLAN.md open issues) — too little data per village to detect a real spike, and it's a privacy risk. District-level only.
+Village/neighbourhood level is intentionally out of scope for now — too little data per village to
+detect a real spike reliably, and it's a privacy risk. District-level only.
 
 ## 4. `events.csv`
 
@@ -88,15 +92,15 @@ Village/neighbourhood level is NOT in scope tonight (see PLAN.md open issues) �
 `events.csv` is manager-owned — nothing writes to it automatically. Auto-detected events go to
 `data/events_candidates.csv` (same columns, always `confirmed=false`); the manager reviews and
 copies the ones they trust into `events.csv` with `confirmed=true`. Only `confirmed=true` rows in
-`events.csv` are used for event-linking (step 5 §5a).
+`events.csv` are used for event-linking (§5a).
 
-## 4b. `sources.csv` — news sources the community picked, for step 6
+## 4b. `sources.csv` — news sources the community picked, for the news-monitor step
 
 | column | meaning |
 |---|---|
 | `source_id` | |
 | `name` | |
-| `type` | `rss` (Tier 1 tonight) \| `telegram_channel` \| `instagram_account` (Tier 2/3) |
+| `type` | `rss` (implemented) \| `telegram_channel` \| `instagram_account` (planned) |
 | `url_or_handle` | |
 | `notes` | |
 | `status` | `pending` (not yet verified live) \| `active` |
@@ -151,7 +155,7 @@ NOT turned into a candidate. Matches go to `events_candidates.csv`, never `event
   itself, so the manager still edits that file directly; the flag is just a visible reminder of
   intent, not a queue for someone else to process.
 
-**§5a implemented in `src/detect.py`** (step 5, done):
+**§5a implemented in `src/detect.py`**:
 - `detect_spikes`: daily hits vs. the median of the trailing 14 days (needs ≥7 prior days of
   history before it will flag anything). Consecutive flagged days merge into one alert.
 - `detect_slow_burn`: a **rolling** check over trailing 6–8-week windows (not just the dataset's
@@ -170,16 +174,16 @@ NOT turned into a candidate. Matches go to `events_candidates.csv`, never `event
 ## Files in this repo right now
 
 ```
-data/lexicon.csv           — step 2
-data/places.csv            — step 1 (seed: 14 governorates + a handful of districts; includes 'haritan',
-                              added for the real 2026-09-25 event, see events.csv/e3)
-data/sources.csv           — step 6, community-picked news sources (RSS for now)
+data/lexicon.csv           — HI lexicon + teammate's screening sheet, merged
+data/places.csv            — seed gazetteer: 14 governorates + a handful of districts; includes 'haritan',
+                              added for the real 2026-09-25 event, see events.csv/e3
+data/sources.csv           — community-picked news sources (RSS for now)
 data/examples/*.csv        — 3-5 example rows per format above, for everyone to check against
                               (events.csv/e3 is a REAL confirmed event, not synthetic)
-data/demo/*.csv, alerts.json — step 4/5, synthetic demo data + its generated alerts
-data/events_candidates.csv — step 6 output, auto-detected candidates awaiting manager review
-src/io.py                  — step 3, Instagram CSV -> messages.csv
-src/keywords.py            — step 3, normalize + score
-src/detect.py              — step 5, scored messages -> alerts.json (spike/slow-burn/event-linking)
-src/news_monitor.py        — step 6, news sources -> events_candidates.csv
+data/demo/*.csv, alerts.json — synthetic demo data + its generated alerts
+data/events_candidates.csv — auto-detected candidates awaiting manager review
+src/io.py                  — Instagram CSV -> messages.csv
+src/keywords.py            — normalize + score
+src/detect.py              — scored messages -> alerts.json (spike/slow-burn/event-linking)
+src/news_monitor.py        — news sources -> events_candidates.csv
 ```

@@ -1,0 +1,314 @@
+/* Early Warning — field app. Visual style follows the manager dashboard:
+   serif headlines, IBM Plex Sans for text, IBM Plex Mono for small labels and numbers,
+   dark navy header, warm off-white page, white cards with thin warm borders, teal buttons.
+   RTL-ready: logical properties (margin-inline, padding-inline, inset-inline, text-align: start)
+   so switching <html dir="rtl"> mirrors the whole layout automatically. */
+
+:root {
+  /* page */
+  --bg: #f4f2ee;
+  --card: #ffffff;
+  --border: #e4e0d8;
+  --border-strong: #cfcac0;
+  --ink: #1d2327;
+  --muted: #5f6b73;
+  --faint: #8a939a;
+
+  /* header (same navy as the dashboard sidebar) */
+  --navy: #1a2a33;
+  --navy-2: #26394a;
+  --on-navy-muted: #9fb0ba;
+
+  /* primary action */
+  --teal: #1f6e8c;
+  --teal-dark: #185a73;
+  --teal-soft: #e3eef1;
+
+  /* alert levels (same words and order as the dashboard: Watch < Warning < Urgent) */
+  --red: #b83227;
+  --orange: #d4632a;
+  --yellow: #d69e1b;
+
+  --radius: 12px;
+  --tap: 52px; /* minimum height of anything you tap */
+
+  --sans: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+  --serif: "Source Serif 4", "IBM Plex Sans Arabic", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 17px;
+}
+
+/* Arabic reads better in Plex Sans Arabic everywhere, including headings. */
+html[lang="ar"] { --sans: "IBM Plex Sans Arabic", system-ui, Tahoma, Arial, sans-serif; --serif: var(--sans); }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ---------- icons (drawn as lines, colour follows the text) ---------- */
+.icon { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-sm { width: 18px; height: 18px; }
+.icon-lg { width: 28px; height: 28px; }
+html[dir="rtl"] .chevron, html[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+
+/* ---------- small uppercase label, like "REPORTING WEEK" on the dashboard ---------- */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-navy-muted);
+}
+/* Arabic letters must join up, so no letter spacing and no monospace for Arabic labels. */
+html[lang="ar"] .eyebrow { font-family: var(--sans); letter-spacing: 0; font-size: 0.8rem; }
+.eyebrow-dark { color: var(--muted); margin: 20px 0 8px 0; display: block; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--navy);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  background: none; border: none; padding: 0; cursor: pointer; color: inherit; text-align: start;
+}
+.brand-title { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; line-height: 1.1; }
+
+/* ---------- buttons ---------- */
+.btn {
+  font: 600 1rem var(--sans);
+  min-height: var(--tap);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary { background: var(--teal); color: white; }
+.btn-primary:hover { background: var(--teal-dark); }
+.btn-secondary { background: var(--card); color: var(--ink); border-color: var(--border-strong); }
+.btn-on-dark { background: transparent; color: white; border-color: rgba(255,255,255,0.35); min-height: 44px; padding: 6px 14px; font-weight: 500; }
+.btn-block { width: 100%; margin-top: 24px; }
+.btn:active { transform: translateY(1px); }
+:focus-visible { outline: 3px solid #9cc7d6; outline-offset: 2px; }
+
+/* ---------- page ---------- */
+.container { max-width: 620px; margin: 0 auto; padding: 24px 16px; }
+.page-title { font-family: var(--serif); font-size: 1.75rem; font-weight: 700; line-height: 1.2; margin: 0; }
+.page-sub { color: var(--muted); margin: 6px 0 0 0; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  margin-top: 16px;
+}
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: none; padding: 0; margin-bottom: 10px;
+  min-height: 44px; cursor: pointer;
+  font: 500 0.95rem var(--sans); color: var(--teal);
+}
+
+/* ---------- home ---------- */
+.primary-action {
+  width: 100%;
+  margin-top: 22px;
+  display: flex; align-items: center; gap: 16px;
+  padding: 22px 20px;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: start;
+  font-family: var(--sans);
+}
+.primary-action:hover { background: var(--teal-dark); }
+.primary-text { flex: 1; display: flex; flex-direction: column; }
+.primary-title { font-size: 1.3rem; font-weight: 700; }
+.primary-sub { font-size: 0.92rem; opacity: 0.85; }
+
+.action-list {
+  margin-top: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.action-row {
+  width: 100%;
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px;
+  min-height: 76px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: start;
+  font-family: var(--sans);
+  color: var(--ink);
+}
+.action-row:last-child { border-bottom: none; }
+.action-row:hover { background: #faf9f6; }
+.action-icon {
+  width: 44px; height: 44px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.action-text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.action-title { font-weight: 600; font-size: 1.05rem; }
+.action-sub { color: var(--muted); font-size: 0.88rem; }
+.chevron { color: var(--faint); }
+
+.demo-note {
+  margin-top: 28px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 0.92rem;
+}
+.demo-note p { margin: 2px 0 0 0; color: var(--muted); }
+
+/* ---------- forms ---------- */
+.q { display: block; font-family: var(--serif); font-size: 1.3rem; font-weight: 700; margin: 0 0 6px 0; }
+.field-label { display: block; font-weight: 600; margin: 20px 0 6px 0; }
+.field-label.first { margin-top: 0; }
+.hint { color: var(--muted); font-size: 0.9rem; margin: 4px 0 12px 0; }
+
+input[type="text"], input[type="url"], input[type="datetime-local"], select, textarea {
+  width: 100%;
+  font: 400 1rem var(--sans);
+  min-height: var(--tap);
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+}
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: 3px solid var(--teal-soft); border-color: var(--teal); }
+
+.check { display: flex; align-items: center; gap: 12px; min-height: var(--tap); cursor: pointer; margin-top: 8px; }
+.check input { width: 22px; height: 22px; flex: none; accent-color: var(--teal); }
+.soft-box { background: #f7f5f1; border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; margin-top: 20px; }
+.soft-box .check { margin-top: 0; }
+
+/* list of choices (event type, how serious) — one tappable row per option */
+.option-list { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+.option { display: block; position: relative; border-bottom: 1px solid var(--border); cursor: pointer; }
+.option:last-child { border-bottom: none; }
+.option input { position: absolute; opacity: 0; pointer-events: none; }
+.option-box {
+  display: flex; align-items: center; gap: 12px;
+  min-height: var(--tap); padding: 12px 16px;
+  font-weight: 500;
+}
+.option-box::after {                /* the round radio mark, at the end of the row */
+  content: ""; margin-inline-start: auto;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border-strong); background: white; flex: none;
+}
+.option input:checked + .option-box { background: var(--teal-soft); }
+.option input:checked + .option-box::after { border-color: var(--teal); box-shadow: inset 0 0 0 4px white; background: var(--teal); }
+.option input:focus-visible + .option-box { outline: 3px solid #9cc7d6; outline-offset: -3px; }
+
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dot-red { background: var(--red); }
+.dot-orange { background: var(--orange); }
+.dot-yellow { background: var(--yellow); }
+
+/* photo pickers */
+.two-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.upload-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  min-height: 96px; padding: 12px;
+  border: 1.5px dashed var(--border-strong); border-radius: 10px;
+  background: #faf9f6; color: var(--teal);
+  font-weight: 600; text-align: center; cursor: pointer;
+}
+.upload-btn:hover { border-color: var(--teal); }
+.thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.thumbs:empty { display: none; }
+.upload-btn-wide { min-height: 120px; gap: 4px; }
+.upload-sub { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+
+/* tile for files that can't be previewed (PDF, audio, documents…): an icon and the file type */
+.thumb-file {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 8px; border: 1px solid var(--border); background: #faf9f6; color: var(--teal);
+  font: 500 0.72rem var(--mono); letter-spacing: 0.06em;
+}
+
+/* one preview: a picture or a video, a remove button in the corner, and for videos a length badge */
+.thumb { position: relative; width: 84px; height: 84px; }
+.thumb img, .thumb video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--navy);
+}
+.thumb-remove {
+  position: absolute; top: -8px; inset-inline-end: -8px;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--bg); background: var(--ink); color: white;
+  font: 600 0.9rem var(--sans); line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+}
+.thumb-badge {
+  position: absolute; bottom: 5px; inset-inline-start: 5px;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px; border-radius: 4px;
+  background: rgba(26, 42, 51, 0.85); color: white;
+  font: 500 0.7rem var(--mono);
+}
+.thumb-badge .icon { width: 12px; height: 12px; }
+
+.pill {
+  display: inline-block; margin: 10px 0 0 0;
+  padding: 3px 12px; border-radius: 6px;
+  font-size: 0.88rem; font-weight: 600;
+}
+.pill-teal { background: var(--teal-soft); color: var(--teal-dark); }
+
+.form-error { color: var(--red); font-weight: 600; margin: 12px 0 0 0; }
+
+/* stepper */
+.progress { height: 4px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0; background: var(--teal); transition: width 0.2s; }
+.form-nav { display: flex; gap: 10px; margin-top: 28px; }
+.form-nav .btn { flex: 1; }
+
+/* done screen */
+.done-card { text-align: center; padding: 36px 20px; margin-top: 8px; }
+.done-icon {
+  width: 60px; height: 60px; margin: 0 auto 14px auto;
+  display: grid; place-items: center;
+  border-radius: 50%; background: var(--teal-soft); color: var(--teal);
+}
+
+/* footer */
+.footer { text-align: center; color: var(--faint); padding: 0 16px 32px 16px; font-size: 0.85rem; }
+.footer p { margin: 0; }
+
+@media (max-width: 360px) {
+  .two-btns { grid-template-columns: 1fr; }
+}

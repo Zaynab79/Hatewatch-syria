@@ -20,6 +20,10 @@
     </div>
     <div class="topbar-right">
       <span id="last-updated" class="last-updated"></span>
+      <button id="staff-toggle" class="btn btn-ghost">
+        <span id="staff-toggle-label">Staff reporting</span>
+        <span id="staff-badge" class="badge-count" hidden>0</span>
+      </button>
       <button id="lang-toggle" class="btn btn-ghost">العربية</button>
     </div>
   </header>
@@ -77,7 +81,7 @@
       <h3 id="add-event-heading">Report something that happened</h3>
       <p id="add-event-note" class="hint">Not from a website? Report something reported to you locally.</p>
       <!-- Same event types and same place list (governorate/district) as the field app's
-           "Report an event" screen (see ../webapp/), so the two feed events.csv the same way. -->
+           "Report an event" screen (see ../field-app/), so the two feed events.csv the same way. -->
       <form id="event-form" class="inline-form inline-form-stacked">
         <select id="event-type-select" required></select>
         <input id="event-type-other-input" type="text" autocomplete="off" hidden />
@@ -106,6 +110,16 @@
     <p id="detail-stat" class="detail-stat"></p>
     <p id="detail-event" class="detail-event" hidden></p>
     <div class="chart-wrap"><canvas id="detail-chart"></canvas></div>
+  </aside>
+
+  <!-- ============ STAFF REPORTING (slide-over) ============ -->
+  <!-- Reads field-app submissions straight out of localStorage (key hatewatch_field_submissions) —
+       shared with ../field-app/ only when both are served from the same origin, see dashboard/README.md. -->
+  <div id="staff-overlay" class="overlay" hidden></div>
+  <aside id="staff-panel" class="detail-panel staff-panel" hidden>
+    <button id="staff-panel-close" class="btn btn-ghost detail-close">✕ <span id="staff-close-label">Close</span></button>
+    <h2 id="staff-heading">Staff reporting</h2>
+    <div id="staff-body"></div>
   </aside>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

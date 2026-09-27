@@ -67,6 +67,49 @@ const STRINGS = {
     baseline_label: "Usual level",
     daily_label: "Daily count",
     event_label: "Event",
+    staff: {
+      toggle: "Staff reporting",
+      heading: "Staff reporting",
+      empty: "No reports yet.",
+      cat_keyword: "Keyword",
+      cat_event: "Event / threat",
+      cat_other: "Other",
+      back: "Back",
+      star: "Star",
+      unstar: "Unstar",
+      close: "Close",
+      reopen: "Reopen",
+      delete: "Delete",
+      confirm_delete: "Delete this report? This can't be undone.",
+      show_closed: "Show closed reports",
+      place: "Place",
+      reported_at: "Reported",
+      reported_by: "Reported by",
+      field_worker: "Field worker",
+      ongoing: "Still happening",
+      neighbourhood: "Neighbourhood / landmark",
+      location_shared: "Exact location shared",
+      media_count: "Files attached",
+      f_type: "Event type",
+      f_description: "What happened",
+      f_platform: "Platform",
+      f_account: "Account / channel",
+      f_handle: "Handle",
+      f_message: "Message text",
+      f_category: "Category",
+      f_note: "Note",
+      f_watchlist: "Requested for watchlist",
+      f_term: "Term",
+      f_variants: "Other spellings",
+      f_language: "Language",
+      f_meaning: "Meaning",
+      f_approval: "Approval status",
+      f_url: "Link",
+      f_name: "Name",
+      f_notes: "Notes",
+      yes: "Yes",
+      no: "No",
+    },
   },
   ar: {
     dir: "rtl",
@@ -113,6 +156,49 @@ const STRINGS = {
     baseline_label: "المستوى المعتاد",
     daily_label: "العدد اليومي",
     event_label: "الحدث",
+    staff: {
+      toggle: "بلاغات الفريق",
+      heading: "بلاغات الفريق",
+      empty: "لا توجد بلاغات بعد.",
+      cat_keyword: "كلمة",
+      cat_event: "حدث / تهديد",
+      cat_other: "أخرى",
+      back: "رجوع",
+      star: "تمييز",
+      unstar: "إلغاء التمييز",
+      close: "إغلاق",
+      reopen: "إعادة فتح",
+      delete: "حذف",
+      confirm_delete: "حذف هذا البلاغ؟ لا يمكن التراجع عن ذلك.",
+      show_closed: "عرض البلاغات المغلقة",
+      place: "المكان",
+      reported_at: "تاريخ البلاغ",
+      reported_by: "أبلغ عنه",
+      field_worker: "عامل ميداني",
+      ongoing: "ما زال مستمراً",
+      neighbourhood: "الحي / معلم قريب",
+      location_shared: "تمت مشاركة الموقع الدقيق",
+      media_count: "عدد الملفات المرفقة",
+      f_type: "نوع الحدث",
+      f_description: "ماذا حدث",
+      f_platform: "المنصة",
+      f_account: "الحساب / القناة",
+      f_handle: "المعرّف",
+      f_message: "نص الرسالة",
+      f_category: "التصنيف",
+      f_note: "ملاحظة",
+      f_watchlist: "طُلبت إضافته لقائمة المراقبة",
+      f_term: "الكلمة",
+      f_variants: "طرق كتابة أخرى",
+      f_language: "اللغة",
+      f_meaning: "المعنى",
+      f_approval: "حالة الموافقة",
+      f_url: "الرابط",
+      f_name: "الاسم",
+      f_notes: "ملاحظات",
+      yes: "نعم",
+      no: "لا",
+    },
   },
 };
 
@@ -164,6 +250,10 @@ function applyLanguageChrome() {
   labelEventTypeSelect();
   labelEventPlaceSelect();
   renderEventChips();
+  document.getElementById("staff-toggle-label").textContent = s.staff.toggle;
+  document.getElementById("staff-heading").textContent = s.staff.heading;
+  document.getElementById("staff-close-label").textContent = s.close;
+  if (!document.getElementById("staff-panel").hidden) renderStaffPanel();
 }
 
 function renderLastUpdated() {
@@ -269,6 +359,7 @@ function clamp(iso, min, max) {
 }
 
 function openDetail(alert) {
+  closeStaffPanel(); // only one slide-over at a time
   const s = t();
   const placesById = Object.fromEntries(DATA.places.map(p => [p.place_id, p]));
   const place = placesById[alert.place_id];
@@ -470,9 +561,9 @@ function renderKeywordList() {
   });
 }
 
-// Same PLACES / EVENT_TYPES lists as the field app (data.js, shared list with webapp/data.js) —
+// Same PLACES / EVENT_TYPES lists as the field app (data.js, shared list with ../field-app/data.js) —
 // built once at boot, then just relabeled on language toggle so the manager's current selection
-// survives switching languages (mirrors webapp/app.js's buildPlaceSelects/applyLanguage).
+// survives switching languages (mirrors ../field-app/app.js's buildPlaceSelects/applyLanguage).
 function gazetteerPlaceName(placeId) {
   const p = PLACES.find(x => x.place_id === placeId);
   return p ? (LANG === "ar" ? p.name_ar : p.name_en) : placeId;
@@ -530,6 +621,246 @@ function labelEventTypeSelect() {
   });
 }
 
+// ---------------------------------------------------------------- staff reporting (field-app submissions)
+// Reads/writes the exact record shape ../field-app/app.js's saveSubmission() writes to
+// localStorage (see ../field-app/SCHEMA.md's "submissions" table) — shared only when both apps
+// are served from the same origin (see this folder's README.md). The field app itself never reads
+// this key back, so adding `starred` here and repurposing `status: "closed"` as a dashboard-only
+// triage state is additive: it can't break anything the field app does.
+const KEY_FIELD_SUBMISSIONS = "hatewatch_field_submissions";
+const escHtml = s => String(s ?? "").replace(/</g, "&lt;");
+
+function getSubmissions() {
+  try { return JSON.parse(localStorage.getItem(KEY_FIELD_SUBMISSIONS)) || []; } catch { return []; }
+}
+function setSubmissions(arr) {
+  try { localStorage.setItem(KEY_FIELD_SUBMISSIONS, JSON.stringify(arr)); } catch { /* private mode etc. */ }
+}
+function updateSubmission(id, patch) {
+  const arr = getSubmissions();
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  Object.assign(arr[idx], patch);
+  setSubmissions(arr);
+}
+
+// keyword -> its own group; event -> "event/threat"; upload + source (screenshots/files, links) -> "other"
+function submissionCategory(kind) {
+  if (kind === "keyword") return "keyword";
+  if (kind === "event") return "event";
+  return "other";
+}
+
+function listLabel(list, id) {
+  const item = list.find(x => x.id === id);
+  return item ? (LANG === "ar" ? item.ar : item.en) : (id || "");
+}
+
+function submissionSummary(item) {
+  const f = item.fields || {};
+  if (item.kind === "event") {
+    const typeLabel = f.type === "other" ? f.type_other : listLabel(EVENT_TYPES, f.type);
+    return `${typeLabel} — ${f.description || ""}`;
+  }
+  if (item.kind === "upload") {
+    return `${listLabel(PLATFORMS, f.platform)} · ${listLabel(CATEGORIES, f.category)}${f.message_text ? " — " + f.message_text : ""}`;
+  }
+  if (item.kind === "keyword") {
+    return `«${f.term || ""}»${f.meaning ? " — " + f.meaning : ""}`;
+  }
+  return f.name || f.url_or_handle || ""; // source
+}
+
+let STAFF_SHOW_CLOSED = false;
+let STAFF_SELECTED_ID = null;
+
+function openStaffPanel() {
+  closeDetail(); // only one slide-over at a time
+  STAFF_SELECTED_ID = null;
+  document.getElementById("staff-overlay").hidden = false;
+  document.getElementById("staff-panel").hidden = false;
+  renderStaffPanel();
+}
+function closeStaffPanel() {
+  document.getElementById("staff-overlay").hidden = true;
+  document.getElementById("staff-panel").hidden = true;
+}
+
+function renderStaffPanel() {
+  if (STAFF_SELECTED_ID) renderStaffDetail(STAFF_SELECTED_ID);
+  else renderStaffList();
+  updateStaffBadge();
+}
+
+function updateStaffBadge() {
+  const openCount = getSubmissions().filter(x => x.status !== "closed").length;
+  const badge = document.getElementById("staff-badge");
+  badge.textContent = openCount > 99 ? "99+" : String(openCount);
+  badge.hidden = openCount === 0;
+}
+
+function renderStaffList() {
+  const s = t().staff;
+  const body = document.getElementById("staff-body");
+  body.innerHTML = "";
+
+  const toggle = document.createElement("label");
+  toggle.className = "staff-toggle-closed";
+  toggle.innerHTML = `<input type="checkbox" id="staff-show-closed" ${STAFF_SHOW_CLOSED ? "checked" : ""} /> <span>${s.show_closed}</span>`;
+  body.appendChild(toggle);
+  toggle.querySelector("input").addEventListener("change", (e) => {
+    STAFF_SHOW_CLOSED = e.target.checked;
+    renderStaffList();
+  });
+
+  const all = getSubmissions();
+  const visible = all
+    .filter(x => STAFF_SHOW_CLOSED || x.status !== "closed")
+    .sort((a, b) => (b.starred ? 1 : 0) - (a.starred ? 1 : 0) || new Date(b.created_at) - new Date(a.created_at));
+
+  const groups = [
+    { key: "keyword", label: s.cat_keyword },
+    { key: "event", label: s.cat_event },
+    { key: "other", label: s.cat_other },
+  ];
+
+  for (const group of groups) {
+    const items = visible.filter(x => submissionCategory(x.kind) === group.key);
+    const section = document.createElement("div");
+    section.className = "staff-group";
+    const title = document.createElement("h4");
+    title.className = "staff-group-title";
+    title.innerHTML = `${escHtml(group.label)} <span class="staff-count">${items.length}</span>`;
+    section.appendChild(title);
+
+    if (items.length === 0) {
+      const none = document.createElement("p");
+      none.className = "hint";
+      none.textContent = s.empty;
+      section.appendChild(none);
+    } else {
+      const list = document.createElement("div");
+      list.className = "staff-item-list";
+      items.forEach(item => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "staff-item" + (item.status === "closed" ? " staff-item-closed" : "");
+        row.innerHTML = `
+          <span class="staff-item-star">${item.starred ? "★" : ""}</span>
+          <span class="staff-item-body">
+            <span class="staff-item-place">${escHtml(gazetteerPlaceName(item.place_id))}</span>
+            <span class="staff-item-summary">${escHtml(submissionSummary(item))}</span>
+          </span>
+          <span class="staff-item-date">${escHtml((item.created_at || "").slice(0, 10))}</span>`;
+        row.addEventListener("click", () => { STAFF_SELECTED_ID = item.id; renderStaffPanel(); });
+        list.appendChild(row);
+      });
+      section.appendChild(list);
+    }
+    body.appendChild(section);
+  }
+
+  if (all.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty-note";
+    empty.textContent = s.empty;
+    body.appendChild(empty);
+  }
+}
+
+function staffFieldRow(label, value) {
+  if (value === undefined || value === null || value === "") return "";
+  return `<div class="staff-field"><span class="staff-field-label">${escHtml(label)}</span>` +
+    `<span class="staff-field-value">${escHtml(value)}</span></div>`;
+}
+
+function renderStaffDetail(id) {
+  const s = t().staff;
+  const body = document.getElementById("staff-body");
+  body.innerHTML = "";
+
+  const item = getSubmissions().find(x => x.id === id);
+  if (!item) { STAFF_SELECTED_ID = null; renderStaffList(); return; }
+  const f = item.fields || {};
+
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "btn btn-ghost btn-small staff-back";
+  back.textContent = "← " + s.back;
+  back.addEventListener("click", () => { STAFF_SELECTED_ID = null; renderStaffPanel(); });
+  body.appendChild(back);
+
+  let rows = "";
+  rows += staffFieldRow(s.place, gazetteerPlaceName(item.place_id));
+  rows += staffFieldRow(s.reported_at, item.created_at ? new Date(item.created_at).toLocaleString() : "");
+  rows += staffFieldRow(s.reported_by, item.created_by === "demo_field_staff" ? s.field_worker : item.created_by);
+
+  if (item.kind === "event") {
+    rows += staffFieldRow(s.f_type, f.type === "other" ? f.type_other : listLabel(EVENT_TYPES, f.type));
+    rows += staffFieldRow(s.f_description, f.description);
+    rows += staffFieldRow(s.ongoing, f.is_ongoing ? s.yes : s.no);
+    rows += staffFieldRow(s.neighbourhood, f.neighbourhood);
+    rows += staffFieldRow(s.location_shared, f.location_shared ? s.yes : s.no);
+    rows += staffFieldRow(s.media_count, (f.media || []).length || "");
+  } else if (item.kind === "upload") {
+    rows += staffFieldRow(s.f_platform, listLabel(PLATFORMS, f.platform));
+    rows += staffFieldRow(s.f_account, f.account_name);
+    rows += staffFieldRow(s.f_handle, f.handle);
+    rows += staffFieldRow(s.f_message, f.message_text);
+    rows += staffFieldRow(s.f_category, listLabel(CATEGORIES, f.category));
+    rows += staffFieldRow(s.f_note, f.note);
+    rows += staffFieldRow(s.f_watchlist, f.add_to_watchlist ? s.yes : s.no);
+    rows += staffFieldRow(s.media_count, (f.media || []).length || "");
+  } else if (item.kind === "keyword") {
+    rows += staffFieldRow(s.f_term, f.term);
+    rows += staffFieldRow(s.f_variants, f.variants);
+    rows += staffFieldRow(s.f_language, listLabel(KEYWORD_LANGS, f.language));
+    rows += staffFieldRow(s.f_meaning, f.meaning);
+    rows += staffFieldRow(s.f_category, listLabel(CATEGORIES, f.category));
+    rows += staffFieldRow(s.f_approval, f.status);
+  } else { // source
+    rows += staffFieldRow(s.f_url, f.url_or_handle);
+    rows += staffFieldRow(s.f_name, f.name);
+    rows += staffFieldRow(s.f_platform, listLabel(PLATFORMS, f.type));
+    rows += staffFieldRow(s.f_category, listLabel(CATEGORIES, f.category));
+    rows += staffFieldRow(s.f_notes, f.notes);
+    rows += staffFieldRow(s.f_watchlist, f.add_to_watchlist ? s.yes : s.no);
+    rows += staffFieldRow(s.f_approval, f.approval);
+  }
+
+  const detail = document.createElement("div");
+  detail.className = "staff-detail";
+  detail.innerHTML = rows;
+  body.appendChild(detail);
+
+  const actions = document.createElement("div");
+  actions.className = "staff-actions";
+  actions.innerHTML = `
+    <button type="button" class="btn btn-secondary${item.starred ? " btn-active" : ""}" id="staff-star-btn">
+      ${item.starred ? "★ " + escHtml(s.unstar) : "☆ " + escHtml(s.star)}</button>
+    <button type="button" class="btn btn-secondary" id="staff-close-btn">
+      ${item.status === "closed" ? escHtml(s.reopen) : escHtml(s.close)}</button>
+    <button type="button" class="btn btn-secondary" id="staff-delete-btn">🗑 ${escHtml(s.delete)}</button>`;
+  body.appendChild(actions);
+
+  document.getElementById("staff-star-btn").addEventListener("click", () => {
+    updateSubmission(id, { starred: !item.starred });
+    renderStaffDetail(id);
+    updateStaffBadge();
+  });
+  document.getElementById("staff-close-btn").addEventListener("click", () => {
+    updateSubmission(id, { status: item.status === "closed" ? "submitted" : "closed" });
+    renderStaffDetail(id);
+    updateStaffBadge();
+  });
+  document.getElementById("staff-delete-btn").addEventListener("click", () => {
+    if (!confirm(s.confirm_delete)) return;
+    setSubmissions(getSubmissions().filter(x => x.id !== id));
+    STAFF_SELECTED_ID = null;
+    renderStaffPanel();
+  });
+}
+
 // ---------------------------------------------------------------- wiring
 function wireEvents() {
   document.getElementById("lang-toggle").addEventListener("click", () => {
@@ -543,6 +874,20 @@ function wireEvents() {
 
   document.getElementById("detail-close").addEventListener("click", closeDetail);
   document.getElementById("overlay").addEventListener("click", closeDetail);
+
+  document.getElementById("staff-toggle").addEventListener("click", openStaffPanel);
+  document.getElementById("staff-panel-close").addEventListener("click", closeStaffPanel);
+  document.getElementById("staff-overlay").addEventListener("click", closeStaffPanel);
+
+  // field-app submissions live in the SAME localStorage (shared origin, see README.md) — a
+  // 'storage' event only fires in OTHER tabs/windows of that origin, which is exactly the case
+  // where a field worker's tab just wrote a new submission while a manager has this one open.
+  window.addEventListener("storage", (e) => {
+    if (e.key === KEY_FIELD_SUBMISSIONS) {
+      updateStaffBadge();
+      if (!document.getElementById("staff-panel").hidden) renderStaffPanel();
+    }
+  });
 
   document.getElementById("event-type-select").addEventListener("change", (e) => {
     const isOther = e.target.value === "other";
@@ -630,6 +975,7 @@ async function boot() {
   buildEventPlaceSelect();
   applyLanguageChrome();
   renderChips(KEY_SOURCES, "source-pending");
+  updateStaffBadge();
   wireEvents();
   try {
     DATA = await loadData();

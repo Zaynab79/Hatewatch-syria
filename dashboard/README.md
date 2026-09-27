@@ -1,14 +1,28 @@
-# Dashboard (step 7)
+# Manager dashboard
 
 Plain HTML/CSS/JS, no build step, no backend. Reads `alerts.json` only (see docs/CONTRACT.md §5).
 
 ## Run it
 
+**On its own:**
 ```bash
 cd dashboard
 python -m http.server 8080
 # open http://localhost:8080
 ```
+
+**Together with the field app** (`../field-app/`), so the **Staff reporting** panel below can see
+its submissions — serve the whole repo from one server at the repo root instead, and open each
+app under its own path:
+```bash
+cd hatewatch
+python -m http.server 8080
+# open http://localhost:8080/dashboard/  and  http://localhost:8080/field-app/
+```
+This matters because `localStorage` (see "Staff reporting" below) is shared per **origin**
+(scheme+host+port), not per folder — `http://localhost:8080/dashboard/` and
+`http://localhost:8080/field-app/` share it, but two separate `http.server` processes on
+different ports would not, even on the same machine.
 
 Opening `index.html` directly via `file://` will NOT work (browsers block `fetch()` of local
 files) — you'll see a friendly "couldn't load data" message telling you to run the command above.
@@ -41,7 +55,7 @@ python -m src.detect --messages data/demo/messages_demo.csv --events data/demo/e
   event type + place + description + date for something reported locally (not from a website). The
   event type list and the place dropdown (governorate, with its districts nested) are the exact same
   `EVENT_TYPES` / `PLACES` lists the field app's "Report an event" screen uses (`data.js`, shared with
-  `../webapp/data.js`), so a manual entry here and a field report there produce the same shape and can
+  `../field-app/data.js`), so a manual entry here and a field report there produce the same shape and can
   both be copied straight into `events.csv`. Neither writes straight into
   `sources.csv`/`events_candidates.csv`/`events.csv` — kept as a visible pending list (browser
   storage) the manager can act on directly; no silent auto-detection bypass, but also no CSV
@@ -53,14 +67,13 @@ python -m src.detect --messages data/demo/messages_demo.csv --events data/demo/e
 - Every `.panel` (alerts, map, community-input) caps at 70vh and scrolls independently instead of
   growing the page.
 - No action recommendations anywhere, per the project's core rule — see the footer note.
-
-## Verified in this sandbox
-- `node --check app.js` → no syntax errors.
-- `python -m src.detect ...` → generates `alerts.json` with the expected 3 alerts.
-- Served via `python -m http.server` and fetched `index.html` / `app.js` / `styles.css` /
-  `alerts.json` with `curl` → all `200`.
-- Every field `app.js` reads (`place_id`, `hits_7d`, `sentence_ar`/`sentence_en`, `top_terms`,
-  `term_timeline`, `linked_event_id`, `title_ar`/`title_en`, timeline rows with `term: "*"`, etc.)
-  checked against the real generated `alerts.json` — all match.
-- Full in-browser visual check (does the map actually render, do the per-term chart curves look
-  right) still needs a real browser — do that once this is synced to your machine.
+- **Staff reporting** (top right, slide-over): what field staff send in through `../field-app/`
+  (see that folder's README for the same-origin requirement). Reads straight out of
+  `localStorage` (key `hatewatch_field_submissions`) — no backend, no network call. Organized
+  into three groups, **Keyword** / **Event · threat** / **Other** (uploads and links share the
+  "Other" group), badge shows how many are still open. Click a report to read every field it
+  carries (labeled with the same `EVENT_TYPES`/`CATEGORIES`/`PLATFORMS`/`KEYWORD_LANGS` lists as
+  the form that collected it, from `data.js`), then **☆ Star** (flags it, sorts it to the top),
+  **Close**/**Reopen** (hides it from the default view without deleting it — toggle "Show closed
+  reports" to see closed ones again), or **🗑 Delete** (asks to confirm; permanent). Updates live
+  if a field report comes in from another tab while this panel is open.

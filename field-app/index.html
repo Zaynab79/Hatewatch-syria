@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#1a2a33" />
+<title>Early Warning — Field reporting</title>
+<!-- Fonts: same families as the manager dashboard. If there's no internet, the page falls back to system fonts. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    Early Warning — FIELD APP (demo).
+    One page, several "screens" (the <section class="view"> blocks below). app.js shows one at a time.
+    Any text with data-i18n="key" is filled in from the STRINGS list in app.js, in English or Arabic.
+    This is a demo: nothing is sent anywhere.
+  -->
+
+  <!-- Icons used on the page, drawn once here and reused with <use href="#i-name">. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="i-alert"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></g>
+      <g id="i-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></g>
+      <g id="i-image"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></g>
+      <g id="i-type"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></g>
+      <g id="i-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g>
+      <g id="i-chevron"><polyline points="9 18 15 12 9 6"/></g>
+      <g id="i-back"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></g>
+      <g id="i-check"><polyline points="20 6 9 17 4 12"/></g>
+      <g id="i-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></g>
+      <g id="i-file"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></g>
+      <g id="i-video"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></g>
+    </defs>
+  </svg>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <button class="brand" data-go="home" aria-label="Home">
+      <span class="eyebrow" data-i18n="eyebrow">Syria · Field reporting</span>
+      <span class="brand-title" data-i18n="title">Early Warning</span>
+    </button>
+    <button id="lang-toggle" class="btn btn-on-dark">العربية</button>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= HOME ================= -->
+    <section class="view" data-view="home">
+      <h1 class="page-title" data-i18n="home_title">What are you reporting?</h1>
+      <p class="page-sub" data-i18n="home_sub">A manager reviews everything you send before anyone acts.</p>
+
+      <button class="primary-action" data-go="report">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-lg"><use href="#i-alert"/></svg>
+        <span class="primary-text">
+          <span class="primary-title" data-i18n="nav_report">Report an event</span>
+          <span class="primary-sub" data-i18n="nav_report_sub">Violence or a threat you saw or heard about</span>
+        </span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon chevron"><use href="#i-chevron"/></svg>
+      </button>
+
+      <div class="action-list">
+        <button class="action-row" data-go="screenshot">
+          <span class="action-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="icon"><use href="#i-upload"/></svg></span>
+          <span class="action-text">
+            <span class="action-title" data-i18n="nav_screenshot">Upload file</span>
+            <span class="action-sub" data-i18n="nav_screenshot_sub">Screenshots, photos, videos or documents</span>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon chevron"><use href="#i-chevron"/></svg>
+        </button>
+        <button class="action-row" data-go="keyword">
+          <span class="action-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="icon"><use href="#i-type"/></svg></span>
+          <span class="action-text">
+            <span class="action-title" data-i18n="nav_keyword">Add keyword</span>
+            <span class="action-sub" data-i18n="nav_keyword_sub">A word or coded term people are using</span>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon chevron"><use href="#i-chevron"/></svg>
+        </button>
+        <button class="action-row" data-go="link">
+          <span class="action-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="icon"><use href="#i-link"/></svg></span>
+          <span class="action-text">
+            <span class="action-title" data-i18n="nav_link">Add link</span>
+            <span class="action-sub" data-i18n="nav_link_sub">A news article, channel or group</span>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon chevron"><use href="#i-chevron"/></svg>
+        </button>
+      </div>
+
+      <div class="demo-note">
+        <strong data-i18n="demo_title">Demo only</strong>
+        <p data-i18n="demo_text">Nothing you enter is sent anywhere.</p>
+      </div>
+    </section>
+
+    <!-- ================= REPORT AN EVENT (5 steps) ================= -->
+    <section class="view" data-view="report" hidden>
+      <button class="back-link" data-go="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-sm flip-rtl"><use href="#i-back"/></svg><span data-i18n="back_home">Home</span>
+      </button>
+      <h1 class="page-title" data-i18n="report_title">Report an event</h1>
+
+      <!-- progress: "STEP 2 OF 5" + bar -->
+      <p id="step-label" class="eyebrow eyebrow-dark"></p>
+      <div class="progress"><div id="step-bar" class="progress-bar"></div></div>
+
+      <form id="report-form" class="card" novalidate>
+        <!-- Step 1: what happened -->
+        <div class="step" data-step="1">
+          <label for="ev-description" class="q" data-i18n="step1_q">What happened?</label>
+          <p class="hint" data-i18n="step1_hint">Who was involved? How many people? Is it still happening?</p>
+          <textarea id="ev-description" name="description" rows="5" required></textarea>
+          <label class="check">
+            <input type="checkbox" name="is_ongoing" /> <span data-i18n="step1_ongoing">It is still happening</span>
+          </label>
+        </div>
+
+        <!-- Step 2: event type (a plain list, filled by app.js from EVENT_TYPES) -->
+        <div class="step" data-step="2" hidden>
+          <p class="q" data-i18n="step2_q">What kind of event?</p>
+          <div id="event-type-list" class="option-list"></div>
+          <div id="type-other-wrap" hidden>
+            <label class="field-label" for="ev-type-other" data-i18n="step2_other">What kind of event was it?</label>
+            <input id="ev-type-other" name="type_other" type="text" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Step 3: when -->
+        <div class="step" data-step="3" hidden>
+          <label for="ev-when" class="q" data-i18n="step3_q">When did it happen?</label>
+          <p class="hint" data-i18n="step3_hint">We filled in "now". Change it if it happened earlier.</p>
+          <input id="ev-when" name="datetime" type="datetime-local" />
+        </div>
+
+        <!-- Step 4: where -->
+        <div class="step" data-step="4" hidden>
+          <label for="ev-place" class="q" data-i18n="step4_q">Where?</label>
+          <select id="ev-place" name="place_id" class="place-select" required></select>
+          <label for="ev-neighbourhood" class="field-label" data-i18n="step4_neigh">Neighbourhood or landmark</label>
+          <input id="ev-neighbourhood" name="neighbourhood" type="text" autocomplete="off" />
+          <div class="soft-box">
+            <label class="check">
+              <input type="checkbox" name="share_location" />
+              <span data-i18n="step4_loc">Share my exact location (optional)</span>
+            </label>
+            <p class="hint" data-i18n="step4_loc_hint">Only if you choose to. If you leave this off, we only keep the place and neighbourhood you typed.</p>
+          </div>
+        </div>
+
+        <!-- Step 5: photos -->
+        <div class="step" data-step="5" hidden>
+          <p class="q" data-i18n="step5_q">Add photos (optional)</p>
+          <label class="upload-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="icon"><use href="#i-camera"/></svg><span data-i18n="add_photos">Add photos</span>
+            <input type="file" accept="image/*" multiple data-preview="ev-photos" hidden />
+          </label>
+          <div id="ev-photos" class="thumbs"></div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" id="step-back" class="btn btn-secondary" data-i18n="back">Back</button>
+          <button type="button" id="step-next" class="btn btn-primary" data-i18n="next">Next</button>
+          <button type="submit" id="step-submit" class="btn btn-primary" data-i18n="send_report" hidden>Send report</button>
+        </div>
+        <p class="form-error" hidden></p>
+      </form>
+    </section>
+
+    <!-- ================= UPLOAD FILE ================= -->
+    <section class="view" data-view="screenshot" hidden>
+      <button class="back-link" data-go="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-sm flip-rtl"><use href="#i-back"/></svg><span data-i18n="back_home">Home</span>
+      </button>
+      <h1 class="page-title" data-i18n="shot_title">Upload file</h1>
+
+      <form id="screenshot-form" class="card" novalidate>
+        <!-- One button for every kind of file: screenshots, photos, videos, audio, PDFs, documents.
+             On a phone it also offers the camera. -->
+        <label class="upload-btn upload-btn-wide">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-lg"><use href="#i-upload"/></svg>
+          <span data-i18n="shot_choose">Choose files</span>
+          <span class="upload-sub" data-i18n="shot_choose_sub">Screenshots, photos, videos, audio or documents</span>
+          <input type="file" multiple data-preview="shot-media" hidden />
+        </label>
+        <!-- previews of what was added (filled by app.js), each with a remove button -->
+        <div id="shot-media" class="thumbs"></div>
+        <p id="video-note" class="hint" data-i18n="video_note" hidden>Videos and large files can take a long time on a slow connection.</p>
+
+        <label class="field-label" for="shot-platform" data-i18n="f_platform">Where did it come from?</label>
+        <select id="shot-platform" name="platform" data-options="PLATFORMS"></select>
+
+        <!-- Only for content found online; hidden when "I took it myself" is chosen above. -->
+        <div class="online-only">
+          <label class="field-label" for="shot-account" data-i18n="f_account">Account, channel or group name</label>
+          <input id="shot-account" name="account_name" type="text" autocomplete="off" />
+
+          <label class="field-label" for="shot-handle" data-i18n="f_handle">Handle (@name), if you can see it</label>
+          <input id="shot-handle" name="handle" type="text" autocomplete="off" dir="ltr" />
+        </div>
+
+        <label class="field-label" for="shot-text" id="shot-text-label" data-i18n="f_message">What does the message say?</label>
+        <textarea id="shot-text" name="message_text" rows="4"></textarea>
+
+        <label class="field-label" for="shot-category" data-i18n="f_category">What kind of hate speech?</label>
+        <select id="shot-category" name="category" data-options="CATEGORIES"></select>
+
+        <label class="field-label" for="shot-place" data-i18n="f_place">Which place is it about?</label>
+        <select id="shot-place" name="place_id" class="place-select" required></select>
+
+        <label class="field-label" for="shot-note" data-i18n="f_note">Short note (optional)</label>
+        <input id="shot-note" name="note" type="text" autocomplete="off" />
+
+        <label class="check soft-box online-only">
+          <input type="checkbox" name="add_to_watchlist" />
+          <span data-i18n="f_watchlist">Add this account to the watchlist</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="send">Send</button>
+        <p class="form-error" hidden></p>
+      </form>
+    </section>
+
+    <!-- ================= ADD KEYWORD ================= -->
+    <section class="view" data-view="keyword" hidden>
+      <button class="back-link" data-go="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-sm flip-rtl"><use href="#i-back"/></svg><span data-i18n="back_home">Home</span>
+      </button>
+      <h1 class="page-title" data-i18n="kw_title">Add a keyword</h1>
+
+      <form id="keyword-form" class="card" novalidate>
+        <label class="field-label first" for="kw-term" data-i18n="f_term">Word or phrase</label>
+        <input id="kw-term" name="term" type="text" autocomplete="off" required />
+
+        <label class="field-label" for="kw-variants" data-i18n="f_variants">Other spellings (optional)</label>
+        <input id="kw-variants" name="variants" type="text" autocomplete="off" />
+
+        <label class="field-label" for="kw-lang" data-i18n="f_language">Language</label>
+        <select id="kw-lang" name="language" data-options="KEYWORD_LANGS"></select>
+
+        <label class="field-label" for="kw-meaning" data-i18n="f_meaning">What does it mean? Who is it aimed at?</label>
+        <textarea id="kw-meaning" name="meaning" rows="3"></textarea>
+
+        <label class="field-label" for="kw-category" data-i18n="f_category">What kind of hate speech?</label>
+        <select id="kw-category" name="category" data-options="CATEGORIES"></select>
+
+        <label class="field-label" for="kw-place" data-i18n="f_where_used">Where is it used?</label>
+        <select id="kw-place" name="place_id" class="place-select" required></select>
+
+        <p class="hint" data-i18n="kw_note">A manager checks every new word before it is used.</p>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="send">Send</button>
+        <p class="form-error" hidden></p>
+      </form>
+    </section>
+
+    <!-- ================= ADD LINK ================= -->
+    <section class="view" data-view="link" hidden>
+      <button class="back-link" data-go="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-sm flip-rtl"><use href="#i-back"/></svg><span data-i18n="back_home">Home</span>
+      </button>
+      <h1 class="page-title" data-i18n="link_title">Add a link</h1>
+
+      <form id="link-form" class="card" novalidate>
+        <label class="field-label first" for="link-url" data-i18n="f_url">Paste the link</label>
+        <input id="link-url" name="url_or_handle" type="url" inputmode="url" autocomplete="off" dir="ltr" required />
+        <p id="link-detected" class="pill pill-teal" hidden></p>
+
+        <label class="field-label" for="link-name" data-i18n="f_link_name">Name of the site, channel or group (optional)</label>
+        <input id="link-name" name="name" type="text" autocomplete="off" />
+
+        <label class="field-label" for="link-place" data-i18n="f_place">Which place is it about?</label>
+        <select id="link-place" name="place_id" class="place-select" required></select>
+
+        <label class="field-label" for="link-category" data-i18n="f_category">What kind of hate speech?</label>
+        <select id="link-category" name="category" data-options="CATEGORIES"></select>
+
+        <label class="field-label" for="link-note" data-i18n="f_note">Short note (optional)</label>
+        <input id="link-note" name="notes" type="text" autocomplete="off" />
+
+        <label class="check soft-box">
+          <input type="checkbox" name="add_to_watchlist" />
+          <span data-i18n="f_watchlist_channel">Add this channel to the watchlist</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="send">Send</button>
+        <p class="form-error" hidden></p>
+      </form>
+    </section>
+
+    <!-- ================= DONE ================= -->
+    <section class="view" data-view="done" hidden>
+      <div class="card done-card">
+        <span class="done-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="icon icon-lg"><use href="#i-check"/></svg></span>
+        <h1 class="page-title" data-i18n="done_title">Thank you</h1>
+        <p class="page-sub" data-i18n="done_text">Your report was sent. A manager will review it.</p>
+        <button class="btn btn-primary btn-block" data-go="home" data-i18n="done_home">Back to home</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p data-i18n="footer_note">You report what you see. The manager decides what to do.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

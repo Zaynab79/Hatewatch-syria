@@ -1,7 +1,9 @@
-/* HateWatch Syria — dashboard: fixed lists shared with the field app (webapp/data.js), so a
- * manager's manual event entry and a field worker's "Report an event" offer the same places
- * and the same event types. Copied from data/places.csv and docs/CONTRACT.md #4 (events.csv
- * `type`). To change a list (add a place, rename a type), edit it here AND in webapp/data.js.
+/* HateWatch Syria — dashboard: fixed lists shared with the field app (../field-app/data.js), so
+ * a manager's manual event entry and a field worker's report offer the same places, event types
+ * and categories, and the Staff reporting panel can show a field submission's raw ids as the same
+ * labels the field app used to collect them. Copied from data/places.csv and docs/CONTRACT.md
+ * (events.csv `type`, lexicon.csv `category`). To change a list, edit it here AND in
+ * ../field-app/data.js.
  */
 
 // Copied from data/places.csv. level = governorate | district; districts point to their governorate.
@@ -37,4 +39,38 @@ const EVENT_TYPES = [
   { id: "bombing",  en: "Bombing or shelling",    ar: "تفجير أو قصف" },
   { id: "arrest",   en: "Arrest",                 ar: "اعتقال" },
   { id: "other",    en: "Other",                  ar: "أخرى" },
+];
+
+// lexicon.csv `category` values (CONTRACT §2). Used to label field-reported keywords,
+// uploads and links in the Staff reporting panel.
+const CATEGORIES = [
+  { id: "political_label",   en: "Political label",          ar: "تسمية سياسية" },
+  { id: "insult",            en: "Insult",                   ar: "إهانة" },
+  { id: "captivity",         en: "Captivity / taking women", ar: "سبي" },
+  { id: "violence",          en: "Call for violence",        ar: "دعوة للعنف" },
+  { id: "expulsion",         en: "Call to expel people",     ar: "دعوة للطرد أو التهجير" },
+  { id: "dehumanizing_slur", en: "Dehumanizing word",        ar: "كلمة مهينة تجرّد من الإنسانية" },
+  { id: "counter_speech",    en: "Speaking against hate",    ar: "خطاب مضاد للكراهية" },
+];
+
+// messages.csv `platform` values, plus the field app's "own_recording" (a photo/video the
+// field worker took themselves — not from an online account).
+const PLATFORMS = [
+  { id: "instagram", en: "Instagram", ar: "إنستغرام" },
+  { id: "telegram",  en: "Telegram",  ar: "تلغرام" },
+  { id: "whatsapp",  en: "WhatsApp",  ar: "واتساب" },
+  { id: "facebook",  en: "Facebook",  ar: "فيسبوك" },
+  { id: "x",         en: "X (Twitter)", ar: "إكس (تويتر)" },
+  { id: "tiktok",    en: "TikTok",    ar: "تيك توك" },
+  { id: "news",      en: "News website", ar: "موقع إخباري" },
+  { id: "other",     en: "Other",     ar: "أخرى" },
+  { id: "own_recording", en: "Not online: field worker recorded it", ar: "ليس من الإنترنت: صوّره العامل الميداني" },
+];
+
+// Languages a field-reported keyword can be written in.
+const KEYWORD_LANGS = [
+  { id: "ar",       en: "Arabic",                  ar: "العربية" },
+  { id: "arabizi",  en: "Arabizi (Arabic in Latin letters)", ar: "عربيزي (عربي بحروف لاتينية)" },
+  { id: "en",       en: "English",                 ar: "الإنجليزية" },
+  { id: "ku",       en: "Kurdish",                 ar: "الكردية" },
 ];
