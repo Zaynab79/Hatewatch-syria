@@ -4,15 +4,40 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HateWatch Syria</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
+  <!-- Icon sprite: the shield-and-alert mark (logo) plus the two alert-type glyphs, drawn once
+       here and reused with <use href="#i-name">, same convention as ../field-app/index.html. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-logo" viewBox="0 0 32 32">
+        <path d="M16 2.5 L27 6.5 V15 C27 21.5 22.5 26.5 16 29.5 C9.5 26.5 5 21.5 5 15 V6.5 Z"
+              fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/>
+        <circle cx="22.5" cy="21.5" r="6.2" fill="#e07a1f"/>
+        <rect x="21.6" y="18.2" width="1.8" height="4.6" rx="0.9" fill="#fff"/>
+        <circle cx="22.5" cy="24.4" r="1" fill="#fff"/>
+      </symbol>
+      <!-- spike: a sudden, stepped jump -->
+      <symbol id="i-spike" viewBox="0 0 24 24">
+        <rect x="3.5" y="15" width="3.4" height="6" rx="1" fill="currentColor"/>
+        <rect x="10.3" y="10" width="3.4" height="11" rx="1" fill="currentColor"/>
+        <rect x="17.1" y="3" width="3.4" height="18" rx="1" fill="currentColor"/>
+      </symbol>
+      <!-- slow burn: one continuous gradual rise, no single jump -->
+      <symbol id="i-slowburn" viewBox="0 0 24 24">
+        <path d="M2 19c4-1 6-4 8-7s6-7 12-9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <!-- ============ TOP BAR ============ -->
   <header class="topbar">
     <div class="topbar-title">
-      <span class="topbar-icon">🛡️</span>
+      <svg class="topbar-icon" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-logo"/></svg>
       <div>
         <h1 id="app-title">HateWatch Syria</h1>
         <p id="app-subtitle" class="subtitle">Early-warning dashboard</p>
@@ -78,8 +103,7 @@
     </div>
 
     <div class="input-col">
-      <h3 id="add-event-heading">Report something that happened</h3>
-      <p id="add-event-note" class="hint">Not from a website? Report something reported to you locally.</p>
+      <h3 id="add-event-heading">Report event</h3>
       <!-- Same event types and same place list (governorate/district) as the field app's
            "Report an event" screen (see ../field-app/), so the two feed events.csv the same way. -->
       <form id="event-form" class="inline-form inline-form-stacked">

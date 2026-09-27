@@ -2,16 +2,21 @@
  * Reads ONLY ./alerts.json (docs/CONTRACT.md #5). No action recommendations are shown —
  * this dashboard reports what is happening, the manager decides what to do.
  *
- * Language: English is the default (build night is in English), but every alert already
- * carries a real Arabic sentence (sentence_ar / title_ar) from src/detect.py, so the toggle
- * below is a REAL, working Arabic mode, not a placeholder. The layout uses CSS logical
- * properties (see styles.css) so <html dir="rtl"> mirrors the whole page automatically.
+ * Language: English is the default, but every alert already carries a real Arabic sentence
+ * (sentence_ar / title_ar) from src/detect.py, so the toggle below is a REAL, working Arabic
+ * mode, not a placeholder. The layout uses CSS logical properties (see styles.css) so
+ * <html dir="rtl"> mirrors the whole page automatically.
  */
 
 const LEVEL_ORDER = ["red", "orange", "yellow"];
 const LEVEL_CLASS = { red: "level-red", orange: "level-orange", yellow: "level-yellow" };
 const LEVEL_DOT = { red: "#d7263d", orange: "#e07a1f", yellow: "#d9a400" };
-const TYPE_ICON = { spike: "⚡", slow_burn: "🔥" };
+// icon sprite defined in index.html (#i-spike / #i-slowburn) — a stepped jump vs. one smooth
+// gradual rise, echoing what the two alert types actually mean
+const TYPE_ICON = {
+  spike: '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spike"/></svg>',
+  slow_burn: "🔥",
+};
 // distinct from LEVEL_DOT's red/orange/yellow so per-term chart lines never look like severity
 const TERM_COLORS = ["#2b6cb0", "#6b46c1", "#0d9488", "#b45309"];
 
@@ -50,8 +55,7 @@ const STRINGS = {
     remove_word: "Remove",
     undo_remove_word: "Undo",
     new_word_tag: "new",
-    add_event_heading: "Report something that happened",
-    add_event_note: "Not from a website? Report something reported to you locally.",
+    add_event_heading: "Report event",
     event_type_placeholder: "What kind of event?",
     event_type_other_placeholder: "What kind of event was it...",
     event_desc_placeholder: "What happened...",
@@ -140,7 +144,6 @@ const STRINGS = {
     undo_remove_word: "تراجع",
     new_word_tag: "جديد",
     add_event_heading: "أبلغ عن حدث",
-    add_event_note: "ليس من موقع؟ أبلغ عن شيء وصلك محلياً.",
     event_type_placeholder: "ما نوع الحدث؟",
     event_type_other_placeholder: "ما نوع الحدث؟ اكتبه هنا",
     event_desc_placeholder: "ماذا حدث...",
@@ -238,7 +241,6 @@ function applyLanguageChrome() {
   document.getElementById("source-input").placeholder = s.source_placeholder;
   document.getElementById("source-submit").textContent = s.add;
   document.getElementById("add-event-heading").textContent = s.add_event_heading;
-  document.getElementById("add-event-note").textContent = s.add_event_note;
   document.getElementById("event-type-other-input").placeholder = s.event_type_other_placeholder;
   document.getElementById("event-desc-input").placeholder = s.event_desc_placeholder;
   document.getElementById("event-neighbourhood-input").placeholder = s.event_neighbourhood_placeholder;
@@ -365,8 +367,8 @@ function openDetail(alert) {
   const place = placesById[alert.place_id];
   const placeName = place ? (LANG === "ar" ? place.name_ar : place.name_en) : alert.place_id;
 
-  document.getElementById("detail-title").textContent =
-    `${TYPE_ICON[alert.type] || ""} ${placeName} — ${s.type_word[alert.type] || alert.type}`;
+  document.getElementById("detail-title").innerHTML =
+    `<span class="icon">${TYPE_ICON[alert.type] || ""}</span> ${escHtml(placeName)} — ${escHtml(s.type_word[alert.type] || alert.type)}`;
 
   const badge = document.getElementById("detail-level-badge");
   badge.textContent = s.level_word[alert.level];
