@@ -1,0 +1,619 @@
+{
+  "generated_at": "2026-09-26T23:02:27.935429Z",
+  "range": {
+    "start": "2025-01-15",
+    "end": "2025-08-10"
+  },
+  "places": [
+    {
+      "place_id": "homs",
+      "name_ar": "حمص",
+      "name_en": "Homs",
+      "lat": 34.7324,
+      "lon": 36.7137,
+      "level": "red",
+      "hits_7d": 1,
+      "hits_prev_7d": 0,
+      "top_terms": [
+        "علوي",
+        "طرد"
+      ]
+    },
+    {
+      "place_id": "sweida",
+      "name_ar": "السويداء",
+      "name_en": "Sweida",
+      "lat": 32.7094,
+      "lon": 36.5697,
+      "level": "red",
+      "hits_7d": 0,
+      "hits_prev_7d": 0,
+      "top_terms": [
+        "طرد",
+        "درزي",
+        "فلول"
+      ]
+    },
+    {
+      "place_id": "jableh",
+      "name_ar": "جبلة",
+      "name_en": "Jableh",
+      "lat": 35.3608,
+      "lon": 35.9264,
+      "level": "red",
+      "hits_7d": 1,
+      "hits_prev_7d": 2,
+      "top_terms": [
+        "فلول",
+        "تصفية",
+        "علوي"
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "alert_id": "sp_jableh_2025-03-07",
+      "type": "spike",
+      "level": "red",
+      "place_id": "jableh",
+      "term": "فلول",
+      "date_start": "2025-03-07",
+      "date_end": "2025-03-08",
+      "count": 90,
+      "baseline": 1.0,
+      "ratio": 45.0,
+      "linked_event_id": "e2",
+      "sentence_ar": "ارتفاع مفاجئ في خطاب الكراهية في جبلة — 45 أضعاف المعتاد. جاء ذلك بعد: أحداث عنف على الساحل السوري.",
+      "sentence_en": "Sudden rise of hate speech in Jableh — 45 times more than usual. This came right after: Violence on the Syrian coast.",
+      "evidence": {
+        "message_ids": [
+          "m313",
+          "m310",
+          "m326",
+          "m327",
+          "m322"
+        ],
+        "sample_texts": [
+          "اذبحوا كل نصيرية جبلة",
+          "اذبحوا كل نصيرية جبلة",
+          "اذبحوا كل نصيرية جبلة"
+        ]
+      }
+    },
+    {
+      "alert_id": "sp_sweida_2025-07-15",
+      "type": "spike",
+      "level": "red",
+      "place_id": "sweida",
+      "term": "طرد",
+      "date_start": "2025-07-15",
+      "date_end": "2025-07-16",
+      "count": 118,
+      "baseline": 1.0,
+      "ratio": 59.0,
+      "linked_event_id": "e1",
+      "sentence_ar": "ارتفاع مفاجئ في خطاب الكراهية في السويداء — 59 أضعاف المعتاد. جاء ذلك بعد: اشتباكات في محافظة السويداء.",
+      "sentence_en": "Sudden rise of hate speech in Sweida — 59 times more than usual. This came right after: Clashes in Sweida governorate.",
+      "evidence": {
+        "message_ids": [
+          "m1355",
+          "m1353",
+          "m1371",
+          "m1377",
+          "m1362"
+        ],
+        "sample_texts": [
+          "اقتلوهم كلهم ما دام دروز، لا رحمة",
+          "اقتلوهم كلهم ما دام دروز، لا رحمة",
+          "اقتلوهم كلهم ما دام دروز، لا رحمة"
+        ]
+      }
+    },
+    {
+      "alert_id": "sb_homs_2025-04-27",
+      "type": "slow_burn",
+      "level": "red",
+      "place_id": "homs",
+      "term": "علوي",
+      "date_start": "2025-04-27",
+      "date_end": "2025-06-15",
+      "count": 176,
+      "baseline": 2.0,
+      "ratio": 21.5,
+      "linked_event_id": null,
+      "sentence_ar": "تصاعد بطيء وثابت في خطاب الكراهية في حمص على مدى عدة أسابيع.",
+      "sentence_en": "Hate speech has been slowly rising in Homs for several weeks in a row.",
+      "evidence": {
+        "message_ids": [
+          "m712",
+          "m717",
+          "m754",
+          "m867",
+          "m888"
+        ],
+        "sample_texts": [
+          "طرد النصيرية من حمص واجب",
+          "طرد النصيرية من حمص واجب",
+          "طرد النصيرية من حمص واجب"
+        ]
+      }
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2025-02-09",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-02-28",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-12",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-19",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-01",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-02",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-03",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-04",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-05",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-06",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-07",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-08",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-09",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-10",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-11",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-12",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-13",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-14",
+      "place_id": "homs",
+      "term": "*",
+      "count": 2
+    },
+    {
+      "date": "2025-05-15",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-16",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-17",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-18",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-19",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-20",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-21",
+      "place_id": "homs",
+      "term": "*",
+      "count": 3
+    },
+    {
+      "date": "2025-05-22",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-23",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-24",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-25",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-26",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-27",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-28",
+      "place_id": "homs",
+      "term": "*",
+      "count": 4
+    },
+    {
+      "date": "2025-05-29",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-05-30",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-05-31",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-06-01",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-06-02",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-06-03",
+      "place_id": "homs",
+      "term": "*",
+      "count": 5
+    },
+    {
+      "date": "2025-06-04",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-05",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-06",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-07",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-08",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-09",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-10",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-11",
+      "place_id": "homs",
+      "term": "*",
+      "count": 6
+    },
+    {
+      "date": "2025-06-12",
+      "place_id": "homs",
+      "term": "*",
+      "count": 7
+    },
+    {
+      "date": "2025-06-13",
+      "place_id": "homs",
+      "term": "*",
+      "count": 7
+    },
+    {
+      "date": "2025-06-14",
+      "place_id": "homs",
+      "term": "*",
+      "count": 7
+    },
+    {
+      "date": "2025-06-15",
+      "place_id": "homs",
+      "term": "*",
+      "count": 7
+    },
+    {
+      "date": "2025-08-08",
+      "place_id": "homs",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-01-22",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-02-26",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-02-27",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-07",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 45
+    },
+    {
+      "date": "2025-03-08",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 45
+    },
+    {
+      "date": "2025-03-17",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-18",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-21",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-04-07",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-12",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-14",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-22",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-05-23",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-06-06",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-07-29",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-08-02",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-08-06",
+      "place_id": "jableh",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-02-16",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-03-15",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-04-03",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-07-01",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-07-12",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-07-13",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 1
+    },
+    {
+      "date": "2025-07-15",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 54
+    },
+    {
+      "date": "2025-07-16",
+      "place_id": "sweida",
+      "term": "*",
+      "count": 64
+    }
+  ],
+  "events": [
+    {
+      "event_id": "e1",
+      "date": "2025-07-14",
+      "place_id": "sweida",
+      "type": "clashes",
+      "title_ar": "اشتباكات في محافظة السويداء",
+      "title_en": "Clashes in Sweida governorate"
+    },
+    {
+      "event_id": "e2",
+      "date": "2025-03-06",
+      "place_id": "jableh",
+      "type": "killing",
+      "title_ar": "أحداث عنف على الساحل السوري",
+      "title_en": "Violence on the Syrian coast"
+    }
+  ],
+  "unlocated_hits": 5
+}

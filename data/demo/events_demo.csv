@@ -1,0 +1,3 @@
+event_id,date,place_id,type,title_ar,title_en,source_url,confirmed
+e1,2025-07-14,sweida,clashes,اشتباكات في محافظة السويداء,Clashes in Sweida governorate,https://example.org/news1,true
+e2,2025-03-06,jableh,killing,أحداث عنف على الساحل السوري,Violence on the Syrian coast,https://example.org/news2,true

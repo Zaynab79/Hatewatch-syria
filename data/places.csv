@@ -1,0 +1,22 @@
+place_id,name_ar,name_en,aliases,level,governorate_id,lat,lon
+damascus,دمشق,Damascus,Damascus|Dimashq|الشام,governorate,damascus,33.5138,36.2765
+rif_dimashq,ريف دمشق,Rif Dimashq,Rif Dimashq|Damascus Countryside|Rural Damascus,governorate,rif_dimashq,33.5,36.3
+aleppo,حلب,Aleppo,Aleppo|Halab,governorate,aleppo,36.2021,37.1343
+homs,حمص,Homs,Homs|Hims,governorate,homs,34.7324,36.7137
+hama,حماة,Hama,Hama|Hamah,governorate,hama,35.1318,36.7578
+latakia,اللاذقية,Latakia,Latakia|Lattakia|Ladhiqiyah|اللاذقيه,governorate,latakia,35.5317,35.7915
+tartus,طرطوس,Tartus,Tartus|Tartous|طرطوص,governorate,tartus,34.8886,35.8869
+idlib,إدلب,Idlib,Idlib|Idleb,governorate,idlib,35.9306,36.6339
+daraa,درعا,Daraa,Daraa|Dara|Deraa,governorate,daraa,32.6189,36.1021
+sweida,السويداء,Sweida,Sweida|As-Sweida|Suwayda|Sweyda,governorate,sweida,32.7094,36.5697
+quneitra,القنيطرة,Quneitra,Quneitra|Kuneitra,governorate,quneitra,33.1263,35.8244
+deir_ez_zor,دير الزور,Deir ez-Zor,Deir ez-Zor|Deir Ezzor|Dayr al-Zawr,governorate,deir_ez_zor,35.3359,40.1408
+raqqa,الرقة,Raqqa,Raqqa|Al-Raqqah,governorate,raqqa,35.9500,39.0100
+hasakah,الحسكة,Hasakah,Hasakah|Al-Hasakah|Al-Hasaka,governorate,hasakah,36.5024,40.7477
+jableh,جبلة,Jableh,Jableh|Jabla,district,latakia,35.3608,35.9264
+baniyas,بانياس,Baniyas,Baniyas|Banias,district,tartus,35.1804,35.9438
+qardaha,القرداحة,Qardaha,Qardaha|Qerdaha,district,latakia,35.4167,36.0833
+sahnaya,صحنايا,Sahnaya,Sahnaya|Ashrafiet Sahnaya,district,rif_dimashq,33.4167,36.2167
+sweida_city,مدينة السويداء,Sweida city,Sweida city,district,sweida,32.7094,36.5697
+qamishli,القامشلي,Qamishli,Qamishli|Kamishli,district,hasakah,37.0522,41.2280
+haritan,حريتان,Haritan,Haritan|Huraytan,district,aleppo,36.3167,37.1333

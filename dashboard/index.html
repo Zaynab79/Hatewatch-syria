@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HateWatch Syria</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="topbar-title">
+      <span class="topbar-icon">🛡️</span>
+      <div>
+        <h1 id="app-title">HateWatch Syria</h1>
+        <p id="app-subtitle" class="subtitle">Early-warning dashboard</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="last-updated" class="last-updated"></span>
+      <button id="lang-toggle" class="btn btn-ghost">العربية</button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main-grid">
+
+    <!-- ---- LEFT (in RTL becomes right): alerts list ---- -->
+    <section class="panel alerts-panel">
+      <h2 id="alerts-heading">Alerts</h2>
+      <div id="alerts-list" class="alerts-list">
+        <!-- alert cards injected by app.js -->
+      </div>
+      <p id="no-alerts" class="empty-note" hidden>No unusual activity right now.</p>
+    </section>
+
+    <!-- ---- RIGHT: map ---- -->
+    <section class="panel map-panel">
+      <h2 id="map-heading">Map</h2>
+      <div id="map"></div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot dot-red"></span><span id="legend-urgent">Urgent</span></span>
+        <span class="legend-item"><span class="dot dot-orange"></span><span id="legend-warning">Warning</span></span>
+        <span class="legend-item"><span class="dot dot-yellow"></span><span id="legend-watch">Watch</span></span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ COMMUNITY INPUT (bottom, always visible) ============ -->
+  <section class="panel input-panel">
+    <div class="input-col">
+      <h3 id="add-keyword-heading">Add a new word or phrase</h3>
+      <form id="keyword-form" class="inline-form">
+        <input id="keyword-input" type="text" required
+               placeholder="Type a word people are using..." autocomplete="off" />
+        <button type="submit" class="btn btn-primary" id="keyword-submit">Add</button>
+      </form>
+      <p id="add-keyword-note" class="hint">These are reviewed by the team before they're added to the system.</p>
+      <div id="keyword-pending" class="chip-list"></div>
+    </div>
+
+    <div class="input-col">
+      <h3 id="add-source-heading">Add a website or channel to watch</h3>
+      <form id="source-form" class="inline-form">
+        <input id="source-input" type="text" required
+               placeholder="Paste a link or channel name..." autocomplete="off" />
+        <button type="submit" class="btn btn-primary" id="source-submit">Add</button>
+      </form>
+      <div id="source-pending" class="chip-list"></div>
+    </div>
+
+    <div class="input-col input-col-download">
+      <button id="download-pending" class="btn btn-secondary">Download list</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p id="no-action-note">This dashboard does not tell you what to do — you decide.</p>
+  </footer>
+
+  <!-- ============ DETAIL PANEL (slide-over) ============ -->
+  <div id="overlay" class="overlay" hidden></div>
+  <aside id="detail-panel" class="detail-panel" hidden>
+    <button id="detail-close" class="btn btn-ghost detail-close">✕ <span id="close-label">Close</span></button>
+    <h2 id="detail-title"></h2>
+    <p id="detail-level-badge" class="badge"></p>
+    <p id="detail-sentence" class="detail-sentence"></p>
+    <p id="detail-stat" class="detail-stat"></p>
+    <p id="detail-event" class="detail-event" hidden></p>
+    <div class="chart-wrap"><canvas id="detail-chart"></canvas></div>
+    <button id="toggle-examples" class="btn btn-ghost">Show example messages</button>
+    <ul id="detail-examples" class="examples-list" hidden></ul>
+  </aside>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

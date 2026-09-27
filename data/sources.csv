@@ -1,0 +1,3 @@
+source_id,name,type,url_or_handle,notes,status
+s1,Enab Baladi,rss,https://www.enabbaladi.net/feed,Syrian independent news site; community-picked; RSS feed to verify/refresh at build time,pending
+s2,North Press Agency,rss,https://npasyria.com/en/feed,Covers NE Syria; community-picked; RSS feed to verify/refresh at build time,pending

@@ -1,0 +1,24 @@
+{
+  "generated_at": "2025-08-10T00:00:00Z",
+  "range": {"start": "2025-01-15", "end": "2025-08-10"},
+  "places": [
+    {"place_id": "sweida", "name_ar": "السويداء", "name_en": "Sweida", "lat": 32.7094, "lon": 36.5697,
+     "level": "red", "hits_7d": 96, "hits_prev_7d": 14, "top_terms": ["طرد", "فلول"]}
+  ],
+  "alerts": [
+    {"alert_id": "a1", "type": "spike", "level": "red", "place_id": "sweida", "term": "*",
+     "date_start": "2025-07-15", "date_end": "2025-07-16", "count": 62, "baseline": 8.0, "ratio": 7.8,
+     "linked_event_id": "e1",
+     "sentence_ar": "ارتفاع مفاجئ في خطاب الكراهية في السويداء بعد الاشتباكات — 8 أضعاف المعتاد.",
+     "sentence_en": "Sudden rise of hate speech in Sweida after the clashes — 8 times more than usual.",
+     "evidence": {"message_ids": ["p1:c1"], "sample_texts": ["طردهم من البلد كلهم ولا رحمة"]}}
+  ],
+  "timeline": [
+    {"date": "2025-07-14", "place_id": "sweida", "term": "*", "count": 6},
+    {"date": "2025-07-15", "place_id": "sweida", "term": "*", "count": 62}
+  ],
+  "events": [
+    {"event_id": "e1", "date": "2025-07-14", "place_id": "sweida", "type": "clashes", "title_en": "Clashes in Sweida governorate"}
+  ],
+  "unlocated_hits": 12
+}

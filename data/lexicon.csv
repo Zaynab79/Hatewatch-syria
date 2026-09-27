@@ -1,0 +1,27 @@
+term_id,term,variants,family,target_group,category,points,exclude,status,source
+t_syrian,سوري,سوريا|سوريين|سورية|syria|syrian,target,Syrian(generic),,0,,approved,teammate_sheet
+t_alawi,علوي,علويين|علويات|نصيري|نصيرية|نصيريين|alawi|alawite|nosayri|nosairyiah|nusayri,target,Alawite,,0,,approved,teammate_sheet
+t_women,نساء,امرأة|بنات|المرأة|women|girls,target,women,,0,,approved,teammate_sheet
+t_kurd,كردي,اكراد|الكرد|kurd|kurds|kurdish,target,Kurd,,0,,approved,HI_lexicon
+t_druze,درزي,دروز|الدروز|druze,target,Druze,,0,,approved,teammate_sheet
+t_shia,شيعي,شيعة|الشيعة|shia|shias,target,Shia,,0,,approved,HI_lexicon
+t_christian,مسيحي,مسيحيين|النصارى|christian|masihiyyin|nasara,target,Christian,,0,,approved,HI_lexicon
+t_sunni_arab,حضر,الحضر|hadar,target,Sunni-Arab(urban),,0,,approved,HI_lexicon
+t_turk,تركي,اتراك|الاتراك|turki|atraak,target,Turk,,0,,approved,HI_lexicon
+t_bedouin,بدوي,بدو|البدو|bedoui|badawi,target,Bedouin,,0,,approved,HI_lexicon
+s_fulul,فلول,الفلول|فلولي|للفلول|fullul|fulul|foloul|floul,slur,Assad-supporters,political_label,3,,approved,teammate_sheet
+s_shabbiha,شبيحة,الشبيحة|shabbiha,slur,Alawite,dehumanizing_slur,3,,approved,HI_lexicon
+s_sabaya,سبايا,سبية|sabaya,slur,Alawite-women,captivity,4,fashion|lingerie|store|shop|collection|kitchen|catering|styles|لانجري|ازياء|عناوين_الأناقة,approved,HI_lexicon
+s_buiajy,بويجي,buiajy|بويجي,slur,Kurd,dehumanizing_slur,3,,approved,HI_lexicon
+s_majous,مجوس,majous,slur,Shia,dehumanizing_slur,3,,approved,HI_lexicon
+s_milishya,مليشيا,ميليشيا|milishyia|milishya,slur,Shia,dehumanizing_slur,2,,approved,HI_lexicon
+s_amil,عميل,عملاء|amil,slur,Kurd,dehumanizing_slur,2,,approved,HI_lexicon
+s_rawafid,روافض,رافضة|rawafid,slur,Shia,dehumanizing_slur,3,,approved,teammate_sheet
+s_sharmoota,شرموطة,شرموط|sharmout|sharmut|sharmoot,slur,women,insult,3,,approved,teammate_sheet
+c_insult_generic,خنازير,خنزير|khanazir,conduct,,insult,2,,approved,seed
+c_captivity,غنائم,غنيمة|spoils|captives|enslav,conduct,,captivity,4,,approved,teammate_sheet
+c_violence_kill,اقتل,قتل|اذبح|ذبح|kill|slaughter,conduct,,violence,5,,approved,teammate_sheet
+c_violence_tasfiya,تصفية,تصفيه|tasfiya,conduct,,violence,5,,approved,teammate_sheet
+c_expulsion,طرد,اطرد|ارحلوا|اخرجوهم|expel|drive out|out,conduct,,expulsion,3,,approved,teammate_sheet
+c_ibada,إبادة,ابادة|تطهير|ibada|genocide|ethnic cleansing,conduct,,violence,6,,approved,seed
+cue_condemn,ندين,نستنكر|نرفض|تحذير|لا يجوز|condemn|denounce|protect|warn against,cue,,counter_speech,-4,,approved,teammate_sheet
