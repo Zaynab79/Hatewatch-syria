@@ -58,8 +58,9 @@
                placeholder="Type a word people are using..." autocomplete="off" />
         <button type="submit" class="btn btn-primary" id="keyword-submit">Add</button>
       </form>
-      <p id="add-keyword-note" class="hint">These are reviewed by the team before they're added to the system.</p>
-      <div id="keyword-pending" class="chip-list"></div>
+      <p id="add-keyword-note" class="hint">Added to the list below right away.</p>
+      <button id="toggle-keyword-list" class="btn btn-ghost btn-small" type="button" data-open="0">Show current keyword list</button>
+      <div id="keyword-list" class="chip-list term-list" hidden></div>
     </div>
 
     <div class="input-col">
@@ -72,8 +73,22 @@
       <div id="source-pending" class="chip-list"></div>
     </div>
 
-    <div class="input-col input-col-download">
-      <button id="download-pending" class="btn btn-secondary">Download list</button>
+    <div class="input-col">
+      <h3 id="add-event-heading">Report something that happened</h3>
+      <p id="add-event-note" class="hint">Not from a website? Report something reported to you locally.</p>
+      <!-- Same event types and same place list (governorate/district) as the field app's
+           "Report an event" screen (see ../webapp/), so the two feed events.csv the same way. -->
+      <form id="event-form" class="inline-form inline-form-stacked">
+        <select id="event-type-select" required></select>
+        <input id="event-type-other-input" type="text" autocomplete="off" hidden />
+        <input id="event-desc-input" type="text" required
+               placeholder="What happened..." autocomplete="off" />
+        <input id="event-date-input" type="date" required />
+        <select id="event-place-select" class="place-select" required></select>
+        <input id="event-neighbourhood-input" type="text" autocomplete="off" />
+        <button type="submit" class="btn btn-primary" id="event-submit">Add</button>
+      </form>
+      <div id="event-pending" class="chip-list"></div>
     </div>
   </section>
 
@@ -91,12 +106,11 @@
     <p id="detail-stat" class="detail-stat"></p>
     <p id="detail-event" class="detail-event" hidden></p>
     <div class="chart-wrap"><canvas id="detail-chart"></canvas></div>
-    <button id="toggle-examples" class="btn btn-ghost">Show example messages</button>
-    <ul id="detail-examples" class="examples-list" hidden></ul>
   </aside>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

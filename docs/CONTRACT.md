@@ -122,11 +122,14 @@ NOT turned into a candidate. Matches go to `events_candidates.csv`, never `event
      "linked_event_id": "e3",
      "sentence_ar": "ارتفاع مفاجئ في استخدام «فلول» في حمص — 8 أضعاف المعتاد.",
      "sentence_en": "Sudden rise of «فلول» in Homs — 8 times more than usual.",
-     "evidence": {"message_ids": ["..."], "sample_texts": ["..."]}}
+     "evidence": {"message_ids": ["..."], "sample_texts": ["..."]},
+     "top_terms": ["فلول", "شرموطة"],
+     "term_timeline": {"فلول": [{"date": "2025-07-15", "count": 120}], "شرموطة": [{"date": "2025-07-15", "count": 40}]}}
   ],
   "timeline": [{"date": "2025-07-15", "place_id": "homs", "term": "*", "count": 180}],
   "events": [{"event_id": "e3", "date": "2025-07-14", "place_id": "homs", "type": "clashes", "title_en": "..."}],
-  "unlocated_hits": 340
+  "unlocated_hits": 340,
+  "terms": [{"term_id": "s_fulul", "term": "فلول", "family": "slur", "target_group": "Assad-supporters", "category": "political_label"}]
 }
 ```
 
@@ -134,6 +137,19 @@ NOT turned into a candidate. Matches go to `events_candidates.csv`, never `event
 - `level`: `yellow` < `orange` < `red`. A `spike` within 0–3 days after a `confirmed=true` event in
   the same place gets `linked_event_id` set and its level bumped one step (§5a below).
 - `sentence_ar`/`sentence_en`: ONE plain sentence, no jargon, no action recommendation.
+- `top_terms`: up to 3 terms (by hit count) matched within the alert's own flagged window — also
+  used to pick which terms get a `term_timeline`.
+- `term_timeline`: per-term zero-filled daily count over the FULL dataset range (not just the
+  flagged window) for up to 4 of `top_terms`, so the dashboard can plot each word as its own curve
+  ("طرد" vs "شرموطة" etc.) alongside the aggregate `timeline` — see §5a's documented deviation:
+  the alert-LEVEL detection still only runs on the aggregate, this is charting only.
+- `terms` (optional, added for the dashboard's "View keyword list" button): every `approved` row
+  from `lexicon.csv`, term_id/term/family/target_group/category only — no `variants`, `points`,
+  `exclude` internals. Not required by `src/validate.py`; a caller of `build_alerts_json()` without
+  a `lexicon` arg just gets `[]`. `term_id` lets the dashboard flag a specific row for removal
+  (browser-local "pending removal" list) — this static page has no write access to `lexicon.csv`
+  itself, so the manager still edits that file directly; the flag is just a visible reminder of
+  intent, not a queue for someone else to process.
 
 **§5a implemented in `src/detect.py`** (step 5, done):
 - `detect_spikes`: daily hits vs. the median of the trailing 14 days (needs ≥7 prior days of

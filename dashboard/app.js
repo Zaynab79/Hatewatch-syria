@@ -12,6 +12,14 @@ const LEVEL_ORDER = ["red", "orange", "yellow"];
 const LEVEL_CLASS = { red: "level-red", orange: "level-orange", yellow: "level-yellow" };
 const LEVEL_DOT = { red: "#d7263d", orange: "#e07a1f", yellow: "#d9a400" };
 const TYPE_ICON = { spike: "⚡", slow_burn: "🔥" };
+// distinct from LEVEL_DOT's red/orange/yellow so per-term chart lines never look like severity
+const TERM_COLORS = ["#2b6cb0", "#6b46c1", "#0d9488", "#b45309"];
+
+// compact "+45×" style badge instead of spelling the ratio out in a full sentence
+function formatRatio(ratio) {
+  const n = ratio >= 10 ? Math.round(ratio) : Math.round(ratio * 10) / 10;
+  return `+${n}×`;
+}
 
 const STRINGS = {
   en: {
@@ -33,15 +41,26 @@ const STRINGS = {
     add_keyword_heading: "Add a new word or phrase",
     keyword_placeholder: "Type a word people are using...",
     add: "Add",
-    add_keyword_note: "These are reviewed by the team before they're added to the system.",
+    add_keyword_note: "Added to the list below right away.",
     add_source_heading: "Add a website or channel to watch",
     source_placeholder: "Paste a link or channel name...",
-    download: "Download list",
+    show_keyword_list: "Show current keyword list",
+    hide_keyword_list: "Hide current keyword list",
+    no_keywords: "No keywords yet.",
+    remove_word: "Remove",
+    undo_remove_word: "Undo",
+    new_word_tag: "new",
+    add_event_heading: "Report something that happened",
+    add_event_note: "Not from a website? Report something reported to you locally.",
+    event_type_placeholder: "What kind of event?",
+    event_type_other_placeholder: "What kind of event was it...",
+    event_desc_placeholder: "What happened...",
+    event_neighbourhood_placeholder: "Neighbourhood or landmark (optional)",
+    choose_place: "Choose a place…",
+    whole_governorate: (name) => `${name} (whole governorate)`,
     no_action_note: "This dashboard does not tell you what to do — you decide.",
     last_updated: "Last updated",
     lang_toggle: "العربية",
-    show_examples: "Show example messages",
-    hide_examples: "Hide example messages",
     load_error: "Could not load the data file (alerts.json). If you opened this file directly " +
       "in the browser, start a small local server instead: open a terminal in the 'dashboard' " +
       "folder and run: python -m http.server 8080 — then open http://localhost:8080",
@@ -68,15 +87,26 @@ const STRINGS = {
     add_keyword_heading: "أضف كلمة أو عبارة جديدة",
     keyword_placeholder: "اكتب كلمة يستخدمها الناس...",
     add: "إضافة",
-    add_keyword_note: "يراجع الفريق هذه الكلمات قبل إضافتها إلى النظام.",
+    add_keyword_note: "تُضاف إلى القائمة أدناه فوراً.",
     add_source_heading: "أضف موقعاً أو قناة للمراقبة",
     source_placeholder: "الصق رابطاً أو اسم قناة...",
-    download: "تحميل القائمة",
+    show_keyword_list: "عرض قائمة الكلمات الحالية",
+    hide_keyword_list: "إخفاء قائمة الكلمات الحالية",
+    no_keywords: "لا توجد كلمات بعد.",
+    remove_word: "إزالة",
+    undo_remove_word: "تراجع",
+    new_word_tag: "جديد",
+    add_event_heading: "أبلغ عن حدث",
+    add_event_note: "ليس من موقع؟ أبلغ عن شيء وصلك محلياً.",
+    event_type_placeholder: "ما نوع الحدث؟",
+    event_type_other_placeholder: "ما نوع الحدث؟ اكتبه هنا",
+    event_desc_placeholder: "ماذا حدث...",
+    event_neighbourhood_placeholder: "الحي أو معلم قريب (اختياري)",
+    choose_place: "اختر مكاناً…",
+    whole_governorate: (name) => `${name} (كامل المحافظة)`,
     no_action_note: "هذه اللوحة لا تخبرك بما يجب فعله — القرار لك.",
     last_updated: "آخر تحديث",
     lang_toggle: "English",
-    show_examples: "عرض أمثلة الرسائل",
-    hide_examples: "إخفاء أمثلة الرسائل",
     load_error: "تعذّر تحميل ملف البيانات (alerts.json). إذا فتحت هذا الملف مباشرة في " +
       "المتصفح، شغّل خادماً محلياً بدلاً من ذلك: افتح الطرفية داخل مجلد 'dashboard' واكتب: " +
       "python -m http.server 8080 — ثم افتح http://localhost:8080",
@@ -121,10 +151,19 @@ function applyLanguageChrome() {
   document.getElementById("add-source-heading").textContent = s.add_source_heading;
   document.getElementById("source-input").placeholder = s.source_placeholder;
   document.getElementById("source-submit").textContent = s.add;
-  document.getElementById("download-pending").textContent = s.download;
+  document.getElementById("add-event-heading").textContent = s.add_event_heading;
+  document.getElementById("add-event-note").textContent = s.add_event_note;
+  document.getElementById("event-type-other-input").placeholder = s.event_type_other_placeholder;
+  document.getElementById("event-desc-input").placeholder = s.event_desc_placeholder;
+  document.getElementById("event-neighbourhood-input").placeholder = s.event_neighbourhood_placeholder;
+  document.getElementById("event-submit").textContent = s.add;
   document.getElementById("no-action-note").textContent = s.no_action_note;
-  const exBtn = document.getElementById("toggle-examples");
-  exBtn.textContent = exBtn.dataset.open === "1" ? s.hide_examples : s.show_examples;
+  const kwBtn = document.getElementById("toggle-keyword-list");
+  kwBtn.textContent = kwBtn.dataset.open === "1" ? s.hide_keyword_list : s.show_keyword_list;
+  renderKeywordList();
+  labelEventTypeSelect();
+  labelEventPlaceSelect();
+  renderEventChips();
 }
 
 function renderLastUpdated() {
@@ -157,7 +196,7 @@ function renderAlertsList() {
     card.innerHTML = `
       <span class="icon">${TYPE_ICON[alert.type] || "•"}</span>
       <div class="body">
-        <div class="place-name">${placeName}</div>
+        <div class="place-name">${placeName} <span class="ratio-badge">${formatRatio(alert.ratio)}</span></div>
         <div class="sentence">${LANG === "ar" ? alert.sentence_ar : alert.sentence_en}</div>
         <span class="level-tag ${LEVEL_CLASS[alert.level]}">${t().level_word[alert.level]}</span>
       </div>`;
@@ -262,15 +301,6 @@ function openDetail(alert) {
     eventEl.hidden = true;
   }
 
-  // examples toggle: reset to hidden each time a new alert is opened
-  const exBtn = document.getElementById("toggle-examples");
-  const exList = document.getElementById("detail-examples");
-  exBtn.dataset.open = "0";
-  exBtn.textContent = s.show_examples;
-  exList.hidden = true;
-  exList.innerHTML = (alert.evidence?.sample_texts || [])
-    .map(txt => `<li>${txt.replace(/</g, "&lt;")}</li>`).join("");
-
   renderChart(alert, eventDate);
 
   document.getElementById("overlay").hidden = false;
@@ -294,9 +324,23 @@ function renderChart(alert, eventDate) {
   const counts = daily.map(r => r.count);
   const baseline = labels.map(() => alert.baseline);
 
+  // per-term curves are the primary view here ("طرد" vs "شرموطة" etc., see docs/CONTRACT.md §5);
+  // the aggregate total is kept as a thin reference line, off by default (toggle it back on via
+  // the legend) so it doesn't visually compete with the colored per-term lines.
+  const termSeries = alert.term_timeline || {};
+  const termDatasets = Object.keys(termSeries).map((term, i) => {
+    const byDate = Object.fromEntries(termSeries[term].map(r => [r.date, r.count]));
+    const color = TERM_COLORS[i % TERM_COLORS.length];
+    return {
+      label: term, data: labels.map(d => byDate[d] || 0),
+      borderColor: color, backgroundColor: color, tension: 0.15, pointRadius: 2, borderWidth: 2,
+    };
+  });
+
   const datasets = [
-    { label: t().daily_label, data: counts, borderColor: "#2b6cb0", backgroundColor: "#2b6cb0",
-      tension: 0.15, pointRadius: 2 },
+    { label: t().daily_label, data: counts, borderColor: "#c3c9d1", backgroundColor: "#c3c9d1",
+      tension: 0.15, pointRadius: 0, borderWidth: 1, hidden: termDatasets.length > 0 },
+    ...termDatasets,
     { label: t().baseline_label, data: baseline, borderColor: "#9aa5b1", borderDash: [6, 4],
       pointRadius: 0, borderWidth: 1.5 },
   ];
@@ -327,6 +371,8 @@ function renderChart(alert, eventDate) {
 // ---------------------------------------------------------------- community input (pending lists)
 const KEY_KEYWORDS = "hatewatch_pending_keywords";
 const KEY_SOURCES = "hatewatch_pending_sources";
+const KEY_EVENTS = "hatewatch_pending_events";
+const KEY_REMOVALS = "hatewatch_pending_removals";
 
 function getPending(key) {
   try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; }
@@ -347,19 +393,141 @@ function renderChips(key, containerId) {
   });
 }
 
-function toCsv(rows, headers) {
-  const esc = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  return [headers.join(","), ...rows.map(r => headers.map(h => esc(r[h])).join(","))].join("\n");
+function renderEventChips() {
+  const container = document.getElementById("event-pending");
+  container.innerHTML = "";
+  const esc = s => String(s).replace(/</g, "&lt;");
+  getPending(KEY_EVENTS).forEach((item, i) => {
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    const typeItem = EVENT_TYPES.find(x => x.id === item.type);
+    const typeLabel = item.type === "other"
+      ? item.type_other
+      : (typeItem ? (LANG === "ar" ? typeItem.ar : typeItem.en) : item.type);
+    const placeLabel = gazetteerPlaceName(item.place_id) + (item.neighbourhood ? ` — ${item.neighbourhood}` : "");
+    chip.innerHTML = `<span>${esc(placeLabel)} · ${esc(typeLabel)}: ${esc(item.description)} (${esc(item.date)})</span>` +
+      `<button aria-label="remove">✕</button>`;
+    chip.querySelector("button").addEventListener("click", () => {
+      const arr = getPending(KEY_EVENTS); arr.splice(i, 1); setPending(KEY_EVENTS, arr); renderEventChips();
+    });
+    container.appendChild(chip);
+  });
 }
 
-function download(filename, text) {
-  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+// Combined view: approved lexicon terms (docs/CONTRACT.md #5's optional "terms" field) plus
+// words the manager has typed in below — added here immediately, no review gate. Removing an
+// approved term just flags it (this static page has no write access to lexicon.csv itself — the
+// manager still has to edit that file directly, this only marks intent); removing a just-typed
+// word deletes your own draft outright, since it was never written anywhere yet either.
+function renderKeywordList() {
+  const container = document.getElementById("keyword-list");
+  container.innerHTML = "";
+  const esc = s => String(s).replace(/</g, "&lt;");
+  const approved = (DATA && DATA.terms) || [];
+  const removedIds = new Set(getPending(KEY_REMOVALS).map(r => r.term_id));
+  const added = getPending(KEY_KEYWORDS);
+
+  if (approved.length === 0 && added.length === 0) {
+    container.innerHTML = `<span class="hint">${t().no_keywords}</span>`;
+    return;
+  }
+
+  approved.forEach(term => {
+    const marked = removedIds.has(term.term_id);
+    const chip = document.createElement("span");
+    chip.className = "chip term-chip" + (marked ? " marked-for-removal" : "");
+    chip.innerHTML = `<span>${esc(term.term)}</span>`;
+    const btn = document.createElement("button");
+    btn.setAttribute("aria-label", marked ? t().undo_remove_word : t().remove_word);
+    btn.textContent = marked ? "↺" : "✕";
+    btn.addEventListener("click", () => {
+      let arr = getPending(KEY_REMOVALS);
+      arr = marked
+        ? arr.filter(r => r.term_id !== term.term_id)
+        : [...arr, { term_id: term.term_id, term: term.term, added_at: new Date().toISOString() }];
+      setPending(KEY_REMOVALS, arr);
+      renderKeywordList();
+    });
+    chip.appendChild(btn);
+    container.appendChild(chip);
+  });
+
+  added.forEach((item, i) => {
+    const chip = document.createElement("span");
+    chip.className = "chip term-chip term-chip-new";
+    chip.innerHTML = `<span>${esc(item.value)} <em>(${t().new_word_tag})</em></span>`;
+    const btn = document.createElement("button");
+    btn.setAttribute("aria-label", t().remove_word);
+    btn.textContent = "✕";
+    btn.addEventListener("click", () => {
+      const arr = getPending(KEY_KEYWORDS);
+      arr.splice(i, 1);
+      setPending(KEY_KEYWORDS, arr);
+      renderKeywordList();
+    });
+    chip.appendChild(btn);
+    container.appendChild(chip);
+  });
+}
+
+// Same PLACES / EVENT_TYPES lists as the field app (data.js, shared list with webapp/data.js) —
+// built once at boot, then just relabeled on language toggle so the manager's current selection
+// survives switching languages (mirrors webapp/app.js's buildPlaceSelects/applyLanguage).
+function gazetteerPlaceName(placeId) {
+  const p = PLACES.find(x => x.place_id === placeId);
+  return p ? (LANG === "ar" ? p.name_ar : p.name_en) : placeId;
+}
+
+function buildEventPlaceSelect() {
+  const select = document.getElementById("event-place-select");
+  select.innerHTML = "";
+  const blank = new Option("", "");
+  blank.dataset.i18nFn = "choose_place";
+  select.appendChild(blank);
+
+  for (const gov of PLACES.filter(p => p.level === "governorate")) {
+    const group = document.createElement("optgroup");
+    group.dataset.placeId = gov.place_id;
+    const whole = new Option("", gov.place_id);
+    whole.dataset.placeWhole = gov.place_id;
+    group.appendChild(whole);
+    for (const d of PLACES.filter(p => p.level === "district" && p.governorate_id === gov.place_id)) {
+      const opt = new Option("", d.place_id);
+      opt.dataset.placeId = d.place_id;
+      group.appendChild(opt);
+    }
+    select.appendChild(group);
+  }
+}
+
+function labelEventPlaceSelect() {
+  const s = t();
+  document.querySelectorAll("#event-place-select option[data-i18n-fn='choose_place']").forEach(o => { o.textContent = s.choose_place; });
+  document.querySelectorAll("#event-place-select optgroup[data-place-id]").forEach(g => { g.label = gazetteerPlaceName(g.dataset.placeId); });
+  document.querySelectorAll("#event-place-select option[data-place-whole]").forEach(o => { o.textContent = s.whole_governorate(gazetteerPlaceName(o.dataset.placeWhole)); });
+  document.querySelectorAll("#event-place-select option[data-place-id]").forEach(o => { o.textContent = gazetteerPlaceName(o.dataset.placeId); });
+}
+
+function buildEventTypeSelect() {
+  const select = document.getElementById("event-type-select");
+  select.innerHTML = "";
+  const blank = new Option("", "");
+  blank.dataset.i18nFn = "event_type_placeholder";
+  select.appendChild(blank);
+  for (const item of EVENT_TYPES) {
+    const opt = new Option("", item.id);
+    opt.dataset.eventTypeId = item.id;
+    select.appendChild(opt);
+  }
+}
+
+function labelEventTypeSelect() {
+  const s = t();
+  document.querySelectorAll("#event-type-select option[data-i18n-fn='event_type_placeholder']").forEach(o => { o.textContent = s.event_type_placeholder; });
+  document.querySelectorAll("#event-type-select option[data-event-type-id]").forEach(o => {
+    const item = EVENT_TYPES.find(x => x.id === o.dataset.eventTypeId);
+    o.textContent = item ? (LANG === "ar" ? item.ar : item.en) : o.dataset.eventTypeId;
+  });
 }
 
 // ---------------------------------------------------------------- wiring
@@ -376,12 +544,11 @@ function wireEvents() {
   document.getElementById("detail-close").addEventListener("click", closeDetail);
   document.getElementById("overlay").addEventListener("click", closeDetail);
 
-  document.getElementById("toggle-examples").addEventListener("click", (e) => {
-    const list = document.getElementById("detail-examples");
-    const open = e.target.dataset.open === "1";
-    e.target.dataset.open = open ? "0" : "1";
-    e.target.textContent = open ? t().show_examples : t().hide_examples;
-    list.hidden = open;
+  document.getElementById("event-type-select").addEventListener("change", (e) => {
+    const isOther = e.target.value === "other";
+    const otherInput = document.getElementById("event-type-other-input");
+    otherInput.hidden = !isOther;
+    if (isOther) otherInput.focus();
   });
 
   document.getElementById("keyword-form").addEventListener("submit", (e) => {
@@ -393,7 +560,12 @@ function wireEvents() {
     arr.push({ value, added_at: new Date().toISOString() });
     setPending(KEY_KEYWORDS, arr);
     input.value = "";
-    renderChips(KEY_KEYWORDS, "keyword-pending");
+    // no review gate: show it in the list immediately
+    const listBtn = document.getElementById("toggle-keyword-list");
+    listBtn.dataset.open = "1";
+    listBtn.textContent = t().hide_keyword_list;
+    document.getElementById("keyword-list").hidden = false;
+    renderKeywordList();
   });
 
   document.getElementById("source-form").addEventListener("submit", (e) => {
@@ -408,28 +580,55 @@ function wireEvents() {
     renderChips(KEY_SOURCES, "source-pending");
   });
 
-  document.getElementById("download-pending").addEventListener("click", () => {
-    const kw = getPending(KEY_KEYWORDS);
-    const src = getPending(KEY_SOURCES);
-    if (kw.length) {
-      download("pending_keywords.csv", toCsv(
-        kw.map(k => ({ term: k.value, status: "pending", source: "manager_added", added_at: k.added_at })),
-        ["term", "status", "source", "added_at"]
-      ));
-    }
-    if (src.length) {
-      download("pending_sources.csv", toCsv(
-        src.map(s => ({ name: s.value, url_or_handle: s.value, status: "pending", added_at: s.added_at })),
-        ["name", "url_or_handle", "status", "added_at"]
-      ));
-    }
+  document.getElementById("event-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const typeSelect = document.getElementById("event-type-select");
+    const typeOtherInput = document.getElementById("event-type-other-input");
+    const descInput = document.getElementById("event-desc-input");
+    const dateInput = document.getElementById("event-date-input");
+    const placeSelect = document.getElementById("event-place-select");
+    const neighInput = document.getElementById("event-neighbourhood-input");
+    const type = typeSelect.value;
+    const typeOther = type === "other" ? typeOtherInput.value.trim() : "";
+    const description = descInput.value.trim();
+    const date = dateInput.value;
+    const placeId = placeSelect.value;
+    if (!type || (type === "other" && !typeOther) || !description || !date || !placeId) return;
+    // Same shape as events.csv (docs/CONTRACT.md #4), so a manager can copy these straight in.
+    const arr = getPending(KEY_EVENTS);
+    arr.push({
+      place_id: placeId,
+      type, type_other: typeOther,
+      description, date,
+      neighbourhood: neighInput.value.trim(),
+      added_at: new Date().toISOString(),
+    });
+    setPending(KEY_EVENTS, arr);
+    typeSelect.value = "";
+    typeOtherInput.value = "";
+    typeOtherInput.hidden = true;
+    descInput.value = "";
+    dateInput.value = "";
+    placeSelect.value = "";
+    neighInput.value = "";
+    renderEventChips();
   });
+
+  document.getElementById("toggle-keyword-list").addEventListener("click", (e) => {
+    const list = document.getElementById("keyword-list");
+    const open = e.target.dataset.open === "1";
+    e.target.dataset.open = open ? "0" : "1";
+    e.target.textContent = open ? t().show_keyword_list : t().hide_keyword_list;
+    list.hidden = open;
+  });
+
 }
 
 // ---------------------------------------------------------------- boot
 async function boot() {
+  buildEventTypeSelect();
+  buildEventPlaceSelect();
   applyLanguageChrome();
-  renderChips(KEY_KEYWORDS, "keyword-pending");
   renderChips(KEY_SOURCES, "source-pending");
   wireEvents();
   try {
@@ -443,6 +642,7 @@ async function boot() {
   renderLastUpdated();
   renderAlertsList();
   renderMap();
+  renderKeywordList();
 }
 
 boot();

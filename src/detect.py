@@ -69,14 +69,45 @@ def _top_terms(scored: pd.DataFrame, place_id: str, date_start: str, date_end: s
     return [t for t, _ in ctr.most_common(n)]
 
 
+def _term_daily_series(scored: pd.DataFrame, place_id: str, terms: list[str], start: str, end: str) -> dict:
+    """Per-term zero-filled daily count series over the full [start, end] range (not just the
+    alert's own flagged window), so the dashboard can plot 'which words are driving this' as
+    separate curves alongside the aggregate. One message can count toward multiple terms if it
+    matched more than one (e.g. a target + a conduct term) — that's expected, each curve is
+    "how often did THIS word appear", not a partition of the aggregate count."""
+    hits = scored[scored["is_hit"] & (scored["place_id"] == place_id)]
+    idx = pd.date_range(start, end, freq="D")
+    out = {}
+    for term in terms:
+        mask = hits["matched_terms"].map(lambda matched: term in matched)
+        counts = hits[mask].groupby("date").size()
+        counts.index = pd.to_datetime(counts.index)
+        series = counts.reindex(idx, fill_value=0)
+        out[term] = [{"date": d.date().isoformat(), "count": int(c)} for d, c in series.items()]
+    return out
+
+
 def _evidence(scored: pd.DataFrame, place_id: str, date_start: str, date_end: str, n=5) -> dict:
     rows = scored[
         (scored.place_id == place_id) & scored.is_hit
         & (scored.date >= date_start) & (scored.date <= date_end)
     ].sort_values("score", ascending=False)
+    # dedupe by text: the demo/real data both have a handful of copy-pasted phrases doing
+    # most of the volume, so the top-3-by-score rows are often the same sentence 3x over —
+    # not useful as "example messages" if they're all identical.
+    seen = set()
+    sample_texts = []
+    for text in rows["text"]:
+        snippet = text[:140]
+        if snippet in seen:
+            continue
+        seen.add(snippet)
+        sample_texts.append(snippet)
+        if len(sample_texts) == 3:
+            break
     return {
         "message_ids": rows["message_id"].head(n).tolist(),
-        "sample_texts": [t[:140] for t in rows["text"].head(3).tolist()],
+        "sample_texts": sample_texts,
     }
 
 
@@ -294,12 +325,16 @@ def build_timeline(scored: pd.DataFrame) -> list[dict]:
     ]
 
 
-def build_alerts_json(scored: pd.DataFrame, places: pd.DataFrame, events: pd.DataFrame) -> dict:
+def build_alerts_json(scored: pd.DataFrame, places: pd.DataFrame, events: pd.DataFrame, lexicon=None) -> dict:
     spikes = detect_spikes(scored, places)
     slow_burns = detect_slow_burn(scored, places)
     alerts = link_events(spikes + slow_burns, events)
     for a in alerts:
-        a.pop("top_terms", None)  # was only needed to build the sentence/evidence
+        # top few terms driving this alert, each as its own zero-filled daily series over the
+        # full dataset range — lets the dashboard plot "طرد", "شرموطة", etc. as separate curves
+        # instead of just the aggregate. Capped to 4 so the chart stays legible.
+        top_terms = a["top_terms"][:4]
+        a["term_timeline"] = _term_daily_series(scored, a["place_id"], top_terms, scored.date.min(), scored.date.max())
 
     places_out = place_summaries(scored, places, alerts)
     timeline = build_timeline(scored)
@@ -310,6 +345,20 @@ def build_alerts_json(scored: pd.DataFrame, places: pd.DataFrame, events: pd.Dat
     ]
     unlocated = int((scored["is_hit"] & scored["place_id"].isna()).sum())
 
+    # optional: approved lexicon terms, so the dashboard can show the manager what's
+    # already tracked (see "View keyword list" in the community-input panel). Not part
+    # of the core alert pipeline, so a missing `lexicon` just yields an empty list.
+    terms_out = []
+    if lexicon is not None:
+        for _, row in lexicon.df.iterrows():
+            terms_out.append({
+                "term_id": row["term_id"],
+                "term": row["term"],
+                "family": row["family"],
+                "target_group": row["target_group"] or None,
+                "category": row["category"] or None,
+            })
+
     return {
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "range": {"start": scored.date.min(), "end": scored.date.max()},
@@ -318,6 +367,7 @@ def build_alerts_json(scored: pd.DataFrame, places: pd.DataFrame, events: pd.Dat
         "timeline": timeline,
         "events": events_out,
         "unlocated_hits": unlocated,
+        "terms": terms_out,
     }
 
 
@@ -341,7 +391,7 @@ def main():
     scored = match_keywords(df, lex)
     scored = assign_place(scored, places)
 
-    result = build_alerts_json(scored, places, events)
+    result = build_alerts_json(scored, places, events, lexicon=lex)
 
     import os
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)

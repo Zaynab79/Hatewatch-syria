@@ -70,8 +70,10 @@ h1, h2, h3 { margin: 0 0 0.4em 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px 20px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
-.alerts-panel { flex: 1 1 42%; min-width: 320px; max-height: 70vh; overflow-y: auto; }
+.alerts-panel { flex: 1 1 42%; min-width: 320px; }
 .map-panel { flex: 1 1 58%; }
 /* z-index (not just position) makes #map establish its own stacking context, so Leaflet's
    internal panes (which go up to z-index 700 in leaflet.css) stay contained under it instead
@@ -103,6 +105,7 @@ h1, h2, h3 { margin: 0 0 0.4em 0; }
 .alert-card .icon { font-size: 1.8rem; line-height: 1; }
 .alert-card .body { flex: 1; }
 .alert-card .place-name { font-weight: 700; font-size: 1.05rem; }
+.ratio-badge { font-weight: 700; color: var(--muted); font-size: 0.9rem; }
 .alert-card .sentence { color: var(--ink); margin-top: 2px; }
 .alert-card .level-tag {
   display: inline-block;
@@ -128,17 +131,33 @@ h1, h2, h3 { margin: 0 0 0.4em 0; }
   align-items: flex-start;
 }
 .input-col { flex: 1 1 280px; }
-.input-col-download { flex: 0 0 auto; align-self: center; }
 .inline-form { display: flex; gap: 10px; }
-.inline-form input {
+.inline-form input, .inline-form select {
   flex: 1;
   font-size: 1rem;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 10px;
+  background: var(--panel-bg);
+  color: var(--ink);
 }
+.inline-form-stacked { flex-wrap: wrap; }
+.inline-form-stacked input, .inline-form-stacked select { flex: 1 1 140px; }
+.btn-small { padding: 6px 12px; font-size: 0.85rem; margin-top: 10px; }
 .hint { color: var(--muted); font-size: 0.9rem; margin: 6px 0 10px 0; }
 .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+/* .chip-list's own `display: flex` has the same specificity as the browser's built-in
+   `[hidden] { display: none }` rule and loads after it, so it silently wins and the
+   `hidden` attribute does nothing unless we out-specificity it explicitly here. */
+.chip-list[hidden] { display: none; }
+.term-list { max-height: 220px; overflow-y: auto; }
+.term-chip.marked-for-removal { text-decoration: line-through; opacity: 0.6; }
+.term-chip button {
+  border: none; background: transparent; cursor: pointer; font-weight: 700; color: var(--muted);
+}
+.term-chip-new { background: #e7f0fb; }
+.term-chip-new em { font-style: normal; color: #2b6cb0; font-size: 0.8rem; }
+.term-chip { background: #eef1f5; }
 .chip {
   background: #eef1f5;
   border-radius: 999px;
@@ -195,8 +214,6 @@ html[dir="rtl"] .detail-panel { box-shadow: 6px 0 24px rgba(0,0,0,0.15); }
   margin-top: 10px;
 }
 .chart-wrap { margin-top: 20px; height: 260px; }
-.examples-list { margin-top: 10px; padding-inline-start: 20px; color: var(--muted); }
-.examples-list li { margin-bottom: 8px; }
 
 @media (max-width: 860px) {
   .main-grid { flex-direction: column; }
